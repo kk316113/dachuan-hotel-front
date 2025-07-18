@@ -1,77 +1,102 @@
-<!--
- * @Description: 
- * @Author: 
- * @Date: 2024-03-11 13:37:23
--->
 <template>
     <div class="login-container">
-        <el-card class="box-card">
-            <div class="text item">
-                <el-row type="flex" justify="center" align="middle" style="text-align: center;">
-                    <el-col :span="auto">
-                        <div style="display: flex; align-items: center;">
-                            <img src="@/assets/03.png" style="
+        <div class="login-box-wrapper">
+            <el-card class="box-card">
+                <div class="text item">
+                    <el-row type="flex" justify="center" align="middle" style="text-align: center;">
+                        <el-col :span="auto">
+                            <div style="display: flex; align-items: center;">
+                                <svg t="1752851154183" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                    xmlns="http://www.w3.org/2000/svg" p-id="5428" width="32" height="32" style="
                                 width: 35px;
                                 height: 35px;
                                 margin-right: 10px;
-                                margin-left: 85px;
+                                margin-left: 64px;
                                 -webkit-user-drag: none;
-                                " />
-                            <span style="font-size: 28px; font-weight: 600; color: black;">
-                                大川酒店管理系统
-                            </span>
-                        </div>
-                    </el-col>
-                </el-row>
-                <br>
-                <el-form ref="loginForm" :model="loginForm" class="login-form" auto-complete="on" label-position="left">
+                                ">
+                                    <path
+                                        d="M960 938.666667h-21.333333V221.62a106.666667 106.666667 0 0 0-89.133334-105.213333l-440.666666-73.446667A21.333333 21.333333 0 0 0 384 64v896a21.333333 21.333333 0 0 0 21.333333 21.333333h554.666667a21.333333 21.333333 0 0 0 0-42.666666z m-362.666667-85.333334h-42.666666v-85.333333h42.666666z m0-128h-42.666666V640h42.666666z m0-128h-42.666666V512h42.666666z m0-128h-42.666666V384h42.666666z m0-128h-42.666666V256h42.666666z m85.333334 512h-42.666667v-85.333333h42.666667z m0-128h-42.666667V640h42.666667z m0-128h-42.666667V512h42.666667z m0-128h-42.666667V384h42.666667z m0-128h-42.666667V256h42.666667z m85.333333 512h-42.666667v-85.333333h42.666667z m0-128h-42.666667V640h42.666667z m0-128h-42.666667V512h42.666667z m0-128h-42.666667V384h42.666667z m0-128h-42.666667V256h42.666667zM331.96 174.333333a21.333333 21.333333 0 0 0-19.88-2.14l-213.333333 85.333334A21.333333 21.333333 0 0 0 85.333333 277.333333v661.333334H64a21.333333 21.333333 0 0 0 0 42.666666h256a21.333333 21.333333 0 0 0 21.333333-21.333333V192a21.333333 21.333333 0 0 0-9.373333-17.666667zM213.333333 853.333333h-42.666666v-85.333333h42.666666z m0-128h-42.666666V640h42.666666z m0-128h-42.666666V512h42.666666z m0-128h-42.666666V384h42.666666z"
+                                        fill="#ffffff" p-id="5429"></path>
+                                </svg>
+                                <span style="font-size: 28px; font-weight: 600; color: white;">
+                                    大川酒店后台管理系统
+                                </span>
+                            </div>
+                        </el-col>
+                    </el-row>
+                    <br>
+                    <el-form ref="loginForm" :model="loginForm" class="login-form" auto-complete="on"
+                        label-position="left">
 
-                    <el-form-item prop="username">
-                        <!-- <span class="svg-container">
+                        <el-form-item prop="username">
+                            <!-- <span class="svg-container">
                             <svg-icon icon-class="user" />
                         </span> -->
-                        <i class="iconfont icon-r-user1" style="font-size: 26px; margin-left: 10px"></i>
-                        <el-input id="account" ref="username" v-model="loginForm.username" name="username" type="text"
-                            tabindex="1" />
-                    </el-form-item>
+                            <svg t="1752850529345" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                xmlns="http://www.w3.org/2000/svg" p-id="8890"
+                                style="width: 26px; height: 26px; margin-left: 10px; vertical-align: middle;">
+                                <path
+                                    d="M581.616221 423.19292q-46.215929 19.030088-84.729204 50.746903t-66.60531 72.495575-43.497345 89.260177-15.40531 101.946903q0 47.122124 12.233628 90.166372t33.982301 81.104425l-24.467257 0q-26.279646 0-61.168142-1.812389t-72.042478-4.984071-73.854867-7.249558-66.60531-8.60885-50.746903-9.061947-26.279646-9.061947q-9.968142-7.249558-14.952212-44.856637t4.077876-96.509735q3.624779-22.654867 14.952212-37.153982t27.638938-24.920354 36.247788-16.764602 40.778761-12.233628 40.325664-12.686726 35.79469-16.764602q19.030088-11.780531 29.451327-23.107965t14.952212-22.20177 4.530973-22.654867-0.906195-26.279646q-1.812389-20.842478-14.499115-33.076106t-28.092035-24.920354q-7.249558-6.343363-13.139823-17.670796t-10.421239-23.107965q-4.530973-13.59292-9.061947-28.092035-6.343363-1.812389-12.686726-6.343363-5.437168-4.530973-11.780531-12.686726t-10.874336-23.561062-3.624779-28.092035 5.437168-22.654867q3.624779-9.968142 11.780531-19.030088 0-34.435398 3.624779-68.870796 3.624779-28.99823 12.686726-62.527434t28.092035-59.80885q18.123894-25.373451 38.966372-41.231858t43.497345-24.920354 44.856637-12.233628 43.044248-3.171681q26.279646 0 52.106195 5.890265t48.481416 15.858407 40.325664 22.654867 27.638938 25.373451q23.561062 28.99823 34.435398 63.886726t15.40531 66.60531q4.530973 36.247788 4.530973 73.40177 6.343363 4.530973 9.968142 11.780531 3.624779 6.343363 5.890265 16.311504t0.453097 24.467257q-1.812389 19.936283-7.702655 31.263717t-13.139823 17.670796q-8.155752 7.249558-17.217699 9.968142-1.812389 5.437168-3.624779 11.780531l-4.530973 12.686726q-1.812389 6.343363-4.530973 13.59292zM711.202061 452.19115q58.902655 0 111.00885 22.654867t90.619469 61.621239 61.168142 91.072566 22.654867 111.00885-22.654867 111.00885-61.168142 91.072566-90.619469 61.168142-111.00885 22.20177q-59.80885 0-111.915044-22.20177t-90.619469-61.168142-61.168142-91.072566-22.654867-111.00885 22.654867-111.00885 61.168142-91.072566 90.619469-61.621239 111.915044-22.654867zM877.941884 682.364602q5.437168-18.123894-4.984071-33.076106t-27.638938-21.295575-34.435398-0.906195-25.373451 28.092035q-4.530973 15.40531-8.60885 28.545133t-8.155752 27.638938-9.968142 31.263717-14.952212 38.513274q-9.061947 23.561062-25.826549 22.20177t-25.826549-19.483186q-9.968142-18.123894-18.576991-38.966372t-16.764602-40.778761-14.499115-36.247788-10.874336-26.279646q-7.249558-14.499115-24.014159-16.311504t-32.623009 4.984071-26.279646 21.295575-3.171681 31.716814q6.343363 18.123894 14.499115 40.778761t17.217699 46.215929 17.217699 46.215929 14.499115 38.966372q13.59292 34.435398 41.231858 51.653097t57.99646 18.123894 57.99646-13.59292 40.325664-43.497345q9.968142-23.561062 20.389381-49.387611t19.936283-50.293805 17.670796-47.122124 13.59292-38.966372z"
+                                    p-id="8891" fill="#ffffff"></path>
+                            </svg>
+                            <el-input id="account" ref="username" v-model="loginForm.username" name="username"
+                                type="text" tabindex="1" />
+                        </el-form-item>
 
-                    <el-form-item prop="password">
-                        <i class="iconfont icon-r-lock" style="font-size: 26px; margin: 0 0 -5px 10px"></i>
-
-                        <el-input id="psw" :key="passwordType" ref="password" v-model="loginForm.password"
-                            :type="passwordType" name="password" tabindex="2" @keyup.enter.native="handleLogin" />
-                        <span class="show-pwd" @click="showPwd">
-                            <svg-icon :icon-class="passwordType === 'password'
+                        <el-form-item prop="password">
+                            <svg t="1752851049785" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                xmlns="http://www.w3.org/2000/svg" p-id="9350"
+                                style="width: 26px; height: 26px; margin-left: 10px; vertical-align: middle;">
+                                <path
+                                    d="M385.150849 385.662338l-128.895105 0 0-150.377622q0-49.102897 19.436563-91.556444t53.706294-74.677323 80.815185-50.637363 101.786214-18.413586q49.102897 0 94.625375 18.413586t80.815185 50.637363 56.263736 74.677323 20.971029 91.556444l0 150.377622-123.78022 0 0-121.734266q0-64.447552-35.804196-99.74026t-97.182817-35.292707q-55.240759 0-88.999001 35.292707t-33.758242 99.74026l0 121.734266zM826.053946 447.040959q27.62038 0 47.568432 19.948052t19.948052 47.568432l0 317.122877q0 27.62038-9.718282 51.66034t-26.597403 41.942058-39.896104 28.131868-50.637363 10.22977l-516.603397 0q-27.62038 0-50.125874-10.22977t-38.361638-27.108891-24.551449-39.384615-8.695305-48.07992l0-324.283716q0-27.62038 19.436563-47.568432t47.056943-19.948052l61.378621 0 128.895105 0 255.744256 0 123.78022 0 61.378621 0z"
+                                    p-id="9351" fill="#ffffff"></path>
+                            </svg>
+                            <el-input id="psw" :key="passwordType" ref="password" v-model="loginForm.password"
+                                :type="passwordType" name="password" tabindex="2" @keyup.enter.native="handleLogin" />
+                            <span class="show-pwd" @click="showPwd">
+                                <svg-icon :icon-class="passwordType === 'password'
                                     ? 'eye'
                                     : 'eye-open'
-                                " />
-                        </span>
-                    </el-form-item>
+                                    " />
+                            </span>
+                        </el-form-item>
 
-                    <el-button id="login_btn" type="primary" style="
+                        <el-button id="login_btn" type="primary" style="
                             width: 100%;
                             margin-bottom: 30px;
-                            font-size: 22px;
+                            font-size: 20px;
+                            background: rgba(255, 255, 255, 0.1);
+                            color: white;
+                            border: 1px solid rgba(255, 255, 255, 0.2);
+                            backdrop-filter: blur(8px);
+                            box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+                            border-radius: 6px;
+                            transition: all 0.3s ease;
                         " @click.native.prevent="handleLogin">
-                        登 录</el-button>
-                </el-form>
-            </div>
-
-        </el-card>
-        <!-- 注意事项 -->
-        <el-card class="notice">
-            <el-col :span="auto">
-                <div class="login-notice">
-                    <h3>注意事项</h3>
-                    <ul>
-                        <li>请使用管理员账号登录</li>
-                        <li>请输入正确的用户名与密码</li>
-                        <li>密码区分大小写</li>
-                        <li>请不要在公共电脑上登录</li>
-                    </ul>
+                            登 录</el-button>
+                    </el-form>
                 </div>
-            </el-col>
-        </el-card>
+
+            </el-card>
+            <!-- 注意事项 -->
+            <div class="login-notice">
+                <h3>注意事项</h3>
+                <ul>
+                    <li>
+                        <strong>账户安全：</strong>此系统为酒店核心资产，请妥善保管您的账户密码，<strong>严禁与他人共享</strong>。所有通过您账户进行的操作均会被记录，并视为您的个人行为。
+                    </li>
+                    <li>
+                        <strong>数据隐私：</strong>系统包含客户高度敏感信息（如身份、联系方式），<strong>严禁非法查询、复制或外泄</strong>，违者将承担法律责任。
+                    </li>
+                    <li>
+                        <strong>操作规范：</strong>进行预订、入住、退房等关键操作时，请务必<strong>仔细核对信息</strong>，确保数据准确无误，以免造成运营混乱或客户投诉。
+                    </li>
+                    <li>
+                        <strong>安全习惯：</strong>离开工位时，请务必<strong>锁定电脑或退出系统</strong>，防止信息泄露。如遇操作问题或发现异常，请立即联系IT部门或您的主管。
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -160,24 +185,48 @@ export default {
 $bg: #283443;
 $light_gray: #303133;
 $cursor: #303133;
-.login-container .notice { 
-    width: 48%;
-    margin-left: 670px;
-    
-    h3 {
-            margin-bottom: 10px;
-            font-size: 17px;
-            color: #222;
-        }
-    
-        ul {
-            padding-left: 18px;
-        }
-    
-        li {
-            margin-bottom: 6px;
-        }
+
+.login-box-wrapper {
+    display: flex;
+    justify-content: center; // 横向居中
+    align-items: center; // 纵向居中
+    height: 100vh;
+    gap: 160px; // 左右间距
+    padding: 0 60px; // 页面边缘留白
+    box-sizing: border-box;
 }
+
+.login-notice {
+    background-color: rgba(50, 50, 50, 0.4);
+    color: #fff;
+    backdrop-filter: blur(4px);
+    padding: 20px;
+    border-radius: 8px;
+    font-size: 15px;
+    line-height: 1.6;
+    height: 70%;
+    width: 700px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+
+    h3 {
+        margin-bottom: 21px;
+        margin-left: 20px;
+        font-size: 24px;
+        color: #fff;
+    }
+
+    ul {
+        padding-left: 18px;
+        margin: 0;
+    }
+
+    li {
+        margin-bottom: 16px;
+        margin-left: 18px;
+        font-size: 18px;
+    }
+}
+
 .info {
     // position: fixed;
     margin-bottom: 10px;
@@ -201,27 +250,24 @@ $cursor: #303133;
 
         input {
             background: transparent;
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 0px;
-            -webkit-appearance: none;
-            border-radius: 0px;
-            padding: 12px 5px 12px 15px;
-            color: $light_gray;
-            height: 47px;
-            caret-color: $cursor;
+            background-color: rgba(255, 255, 255, 0.1); // 更通透
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            padding: 12px 15px;
+            color: #fff; // 输入文字为白色
+            caret-color: #fff;
 
-            &:-webkit-autofill {
-                box-shadow: 0 0 0px 1000px $bg inset !important;
-                -webkit-text-fill-color: $cursor !important;
+            &::placeholder {
+                color: rgba(255, 255, 255, 0.6);
             }
         }
     }
 
     .el-form-item {
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        background: rgba(0, 0, 0, 0.1);
-        border-radius: 5px;
-        color: #454545;
+        border: none;
+        background: transparent;
+        color: #fff;
+        margin-bottom: 20px;
     }
 }
 </style>
@@ -283,10 +329,10 @@ $light_gray: #eee;
 
     .show-pwd {
         position: absolute;
-        right: 10px;
-        top: 7px;
+        right: 35px;
+        top: 2px;
         font-size: 16px;
-        color: $dark_gray;
+        color: white;
         cursor: pointer;
         user-select: none;
     }
@@ -305,11 +351,10 @@ $light_gray: #eee;
 
 .box-card {
     width: 480px;
-    margin-top: 35vh;
-    margin-left: 150px;
-    /*    background-color: #2d3a4b;*/
-    /* border: 1px solid #2d3a4b;  */
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: rgba(50, 50, 50, 0.4);
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    color: #fff;
 }
 
 .login-container .el-input input:-webkit-autofill {
