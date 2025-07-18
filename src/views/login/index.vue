@@ -7,21 +7,20 @@
     <div class="login-container">
         <el-card class="box-card">
             <div class="text item">
-                <el-row :gutter="24" style="text-align: center">
-                    <el-col :span="8" style="text-align: right;">
-                        <img src="@/assets/03.png" style="
-                                width: 40px;
-                                height: 40px;
-                                margin: 3px 0 0 0;
+                <el-row type="flex" justify="center" align="middle" style="text-align: center;">
+                    <el-col :span="auto">
+                        <div style="display: flex; align-items: center;">
+                            <img src="@/assets/03.png" style="
+                                width: 35px;
+                                height: 35px;
+                                margin-right: 10px;
+                                margin-left: 85px;
                                 -webkit-user-drag: none;
-                                -khtml-user-drag: none;
-                                -moz-user-drag: none;
-                                /* user-drag: none; */
-                            " />
-                    </el-col>
-                    <el-col :span="16"
-                        style="font-size: 32px;font-weight: 600;text-align: left;margin: 7px 0 0 0;color: black;">
-                        酒店管理系统
+                                " />
+                            <span style="font-size: 28px; font-weight: 600; color: black;">
+                                大川酒店管理系统
+                            </span>
+                        </div>
                     </el-col>
                 </el-row>
                 <br>
@@ -58,6 +57,20 @@
                 </el-form>
             </div>
 
+        </el-card>
+        <!-- 注意事项 -->
+        <el-card class="notice">
+            <el-col :span="auto">
+                <div class="login-notice">
+                    <h3>注意事项</h3>
+                    <ul>
+                        <li>请使用管理员账号登录</li>
+                        <li>请输入正确的用户名与密码</li>
+                        <li>密码区分大小写</li>
+                        <li>请不要在公共电脑上登录</li>
+                    </ul>
+                </div>
+            </el-col>
         </el-card>
     </div>
 </template>
@@ -147,7 +160,24 @@ export default {
 $bg: #283443;
 $light_gray: #303133;
 $cursor: #303133;
-
+.login-container .notice { 
+    width: 48%;
+    margin-left: 670px;
+    
+    h3 {
+            margin-bottom: 10px;
+            font-size: 17px;
+            color: #222;
+        }
+    
+        ul {
+            padding-left: 18px;
+        }
+    
+        li {
+            margin-bottom: 6px;
+        }
+}
 .info {
     // position: fixed;
     margin-bottom: 10px;
@@ -171,6 +201,7 @@ $cursor: #303133;
 
         input {
             background: transparent;
+            background-color: rgba(255, 255, 255, 0.1);
             border: 0px;
             -webkit-appearance: none;
             border-radius: 0px;
@@ -274,10 +305,11 @@ $light_gray: #eee;
 
 .box-card {
     width: 480px;
-    margin: 20vh auto;
-    /*    background-color: #2d3a4b;
-    border: 1px solid #2d3a4b; */
-    background-color: rgba(255, 255, 255, 0.8);
+    margin-top: 35vh;
+    margin-left: 150px;
+    /*    background-color: #2d3a4b;*/
+    /* border: 1px solid #2d3a4b;  */
+    background-color: rgba(255, 255, 255, 0.7);
 }
 
 .login-container .el-input input:-webkit-autofill {
