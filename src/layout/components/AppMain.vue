@@ -29,7 +29,11 @@ export default {
   width: 100%;
   position: relative;
   overflow: hidden;
-  background-color: #FAF0E6;
+  background-image: url("../../assets/all-bg.jpg");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 .fixed-header+.app-main {
   padding-top: 50px;

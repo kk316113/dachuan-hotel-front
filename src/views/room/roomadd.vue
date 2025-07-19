@@ -2,8 +2,8 @@
   <div class="app-container">
     <el-row>
       <el-col :span="16" :offset="4">
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
+        <div class="content-card">
+          <div class="card-header">
             <span>输入新房间信息</span>
           </div>
           
@@ -26,7 +26,6 @@
                 </el-form-item>
               </el-col>
             </el-row>
-
             <el-row :gutter="20">
               <el-col :span="12">
                 <el-form-item label="房间类型" prop="type">
@@ -48,7 +47,6 @@
                 </el-form-item>
               </el-col>
             </el-row>
-            
             <el-form-item label="房间介绍" prop="introduce">
               <el-input 
                 type="textarea" 
@@ -56,16 +54,14 @@
                 placeholder="请输入房间的简单介绍（可选）"
               ></el-input>
             </el-form-item>
-            
             <el-form-item>
               <el-button type="primary" @click="submitForm" :loading="loading">确认添加</el-button>
               <el-button @click="resetForm">重置表单</el-button>
             </el-form-item>
           </el-form>
-        </el-card>
+        </div>
       </el-col>
     </el-row>
-
     <el-dialog title="提示" :visible.sync="dialogVisible" width="30%" center>
       <span>新房间信息添加成功！</span>
       <span slot="footer" class="dialog-footer">
@@ -131,7 +127,6 @@ export default {
         }
       });
     },
-    // 重置表单的方法
     resetForm() {
       this.$refs.addFormRef.resetFields();
       this.addForm = { ...this.initialForm };
@@ -144,8 +139,13 @@ export default {
 .app-container {
   padding: 20px;
 }
-.box-card {
-  width: 100%;
+.card-header {
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  margin-bottom: 20px;
 }
 .add-form {
   margin-top: 20px;
