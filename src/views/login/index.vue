@@ -147,27 +147,38 @@ export default {
                 method: "POST",
             }).then(
                 (res) => {
-                    localStorage.setItem("hasLogin", true);
-                    localStorage.setItem("token", res.data.token);
-                    localStorage.setItem("userInfo", JSON.stringify(res.data));
-                    this.$router.push({
-                        path: "/home",
-                    });
-                },
-                (e) => {
-                    this.passwordError = true;
-                    this.loading = false;
-                    if (e.response.data == undefined) {
+                    if (res.code === 1) {
+                        // 登录成功处理
+                        localStorage.setItem("hasLogin", true);
+                        localStorage.setItem("token", res.data.token);
+                        localStorage.setItem("userInfo", JSON.stringify(res.data));
+                        this.$router.push({ path: "/home" });
+                    } else {
+                        this.passwordError = true;
+                        this.loading = false;
                         this.$message({
                             showClose: true,
-                            message: e,
+                            message: e.message || "网络错误",
+                            type: "error",
+                            duration: 0,
+                        });
+                    }
+                },
+                (e) => {
+                    // 网络请求本身失败（如服务器挂了、跨域、断网）
+                    this.passwordError = true;
+                    this.loading = false;
+                    if (!e.response || e.response.data == undefined) {
+                        this.$message({
+                            showClose: true,
+                            message: e.message || "请求失败",
                             type: "error",
                             duration: 0,
                         });
                     } else {
                         this.$message({
                             showClose: true,
-                            message: e.response.data,
+                            message: e.response.data || "服务错误",
                             type: "error",
                             duration: 0,
                         });
