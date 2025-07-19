@@ -63,3 +63,165 @@ div:focus {
 .app-container {
   padding: 20px;
 }
+SCSS
+
+
+
+// 通用的内容卡片样式
+.content-card {
+  background-color: rgba(50, 50, 50, 0.4); // 半透明背景
+  backdrop-filter: blur(4px); // 毛玻璃效果
+  border-radius: 8px;
+  padding: 20px;
+  color: #fff; // 默认文字颜色为白色
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+}
+
+// --- 以下是关键：让 Element UI 组件适应新风格 ---
+
+// 表格透明化
+.content-card .el-table,
+.content-card .el-table__expanded-cell {
+  background-color: transparent !important;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  backdrop-filter: blur(10px);// 毛玻璃效果
+}
+
+.content-card .el-table th,
+.content-card .el-table tr,
+.content-card .el-table td {
+  background-color: rgba(50, 50, 50, 0.4) !important;
+  color: #fff !important; // 表格文字颜色
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+// 表格鼠标悬浮行背景色
+.content-card .el-table--enable-row-hover .el-table__body tr:hover > td {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+// 表单标签文字颜色
+.content-card .el-form-item__label {
+    color: #fff !important;
+}
+
+// 输入框样式
+.content-card .el-input__inner, .content-card .el-textarea__inner {
+  background-color: rgba(50, 50, 50, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: #fff !important;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  backdrop-filter: blur(10px);// 毛玻璃效果
+}
+// --- 按钮样式 ---
+
+// 基础按钮样式
+.content-card .el-button {
+  color: #fff !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1) !important;
+  backdrop-filter: blur(10px) !important;
+  // 默认使用深灰色半透明背景
+  background-color: rgba(50, 50, 50, 0.4) !important;
+}
+
+// 主要按钮 (Primary)
+.content-card .el-button--primary {
+  background-color: rgba(64, 158, 255, 0.5) !important; // 蓝色半透明
+}
+.content-card .el-button--primary:hover, .content-card .el-button--primary:focus {
+  background-color: rgba(64, 158, 255, 0.7) !important;
+}
+
+// 成功按钮 (Success)
+.content-card .el-button--success {
+  background-color: rgba(103, 194, 58, 0.5) !important; // 绿色半透明
+}
+.content-card .el-button--success:hover, .content-card .el-button--success:focus {
+  background-color: rgba(103, 194, 58, 0.7) !important;
+}
+
+// 危险按钮 (Danger)
+.content-card .el-button--danger {
+  background-color: rgba(245, 108, 108, 0.5) !important; // 红色半透明
+}
+.content-card .el-button--danger:hover, .content-card .el-button--danger:focus {
+  background-color: rgba(245, 108, 108, 0.7) !important;
+}
+
+// 默认按钮悬浮
+.content-card .el-button--default:hover, .content-card .el-button--default:focus {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+.content-card .el-input-number {
+  border-radius: 8px !important;
+}
+
+// “+” 和 “-” 按钮的样式
+.content-card .el-input-number__decrease,
+.content-card .el-input-number__increase {
+  color: #fff !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1) !important;
+  backdrop-filter: blur(10px) !important;
+  background-color: rgba(50, 50, 50, 0.4) !important;
+}
+
+// 按钮悬浮效果
+.content-card .el-input-number__decrease:hover,
+.content-card .el-input-number__increase:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+// 调整左右按钮的边框圆角
+.content-card .el-input-number__decrease {
+  border-top-left-radius: 8px !important;
+  border-bottom-left-radius: 8px !important;
+}
+.content-card .el-input-number__increase {
+  border-top-right-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
+}
+
+.content-card .el-input-number .el-input__inner {
+  border-radius: 8px !important;
+}
+// --- 对话框 (el-dialog) 风格 ---
+
+// 1. 对话框主体样式
+.el-dialog {
+  // 应用核心的“毛玻璃”效果
+  background-color: rgba(50, 50, 50, 0.5) !important; // 透明度可以比卡片稍高一些
+  backdrop-filter: blur(10px) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+// 2. 对话框头部
+.el-dialog__header {
+  // 标题文字颜色
+  .el-dialog__title {
+    color: #fff !important;
+  }
+  // 右上角关闭按钮
+  .el-dialog__headerbtn .el-dialog__close {
+    color: #fff !important;
+  }
+  .el-dialog__headerbtn:hover .el-dialog__close {
+    color: #409EFF !important; // 悬浮时变色
+  }
+}
+
+// 3. 对话框内容区域
+.el-dialog__body {
+  color: #eee !important; // 内容区域文字颜色
+}
+
+// 4. 对话框底部
+.el-dialog__footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.2); // 给底部加一条分割线
+}

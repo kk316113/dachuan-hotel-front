@@ -1,18 +1,15 @@
-// sidebar
-$menuText:#bfcbd9;
-$menuActiveText:#409EFF;
-$subMenuActiveText:#f4f4f5; //https://github.com/ElemeFE/element/issues/12951
+$menuText: rgba(255, 255, 255, 0.85); // 菜单文字颜色
+$menuActiveText: #409EFF; // 菜单项激活时的文字颜色（保持Element UI的蓝色高亮）
+$subMenuActiveText: #f4f4f5; // 子菜单项激活时的文字颜色（浅白色）
 
-$menuBg:#304156;
-$menuHover:#263445;
+// 主要修改这里：将背景色改为半透明的 rgba 值
+$menuBg: rgba(50, 50, 50, 0.8); // 菜单父容器背景透明
+$menuHover: rgba(255, 255, 255, 0.1); // 鼠标悬浮时的背景高亮
 
-$subMenuBg:#1f2d3d;
-$subMenuHover:#001528;
-
+$subMenuBg: rgba(70,70,70, 0.5); // 子菜单的背景色
+$subMenuHover: rgba(255, 255, 255, 0.1); // 子菜单鼠标悬浮
 $sideBarWidth: 210px;
 
-// the :export directive is the magic sauce for webpack
-// https://www.bluematador.com/blog/how-to-share-variables-between-js-and-sass
 :export {
   menuText: $menuText;
   menuActiveText: $menuActiveText;

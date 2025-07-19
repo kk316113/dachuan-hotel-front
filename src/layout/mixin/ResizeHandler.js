@@ -1,7 +1,8 @@
 import store from '@/store'
 
-const { body } = document
-const WIDTH = 992 // refer to Bootstrap's responsive design
+// 定义两个临界点
+const TABLET_WIDTH = 992 // 小于这个宽度，进入“平板模式”（侧边栏缩略）
+const MOBILE_WIDTH = 768 // 小于这个宽度，进入“移动模式”（侧边栏隐藏）
 
 export default {
   watch: {
@@ -18,26 +19,29 @@ export default {
     window.removeEventListener('resize', this.$_resizeHandler)
   },
   mounted() {
-    const isMobile = this.$_isMobile()
-    if (isMobile) {
-      store.dispatch('app/toggleDevice', 'mobile')
-      store.dispatch('app/closeSideBar', { withoutAnimation: true })
-    }
+    this.$_resizeHandler()
   },
   methods: {
-    // use $_ for mixins properties
-    // https://vuejs.org/v2/style-guide/index.html#Private-property-names-essential
-    $_isMobile() {
-      const rect = body.getBoundingClientRect()
-      return rect.width - 1 < WIDTH
-    },
     $_resizeHandler() {
       if (!document.hidden) {
-        const isMobile = this.$_isMobile()
-        store.dispatch('app/toggleDevice', isMobile ? 'mobile' : 'desktop')
-
-        if (isMobile) {
+        const currentWidth = document.body.getBoundingClientRect().width
+        // 1. 判断是否为移动模式
+        if (currentWidth < MOBILE_WIDTH) {
+          store.dispatch('app/toggleDevice', 'mobile')
+          // 在移动模式下，强制关闭侧边栏（进入抽屉模式）
           store.dispatch('app/closeSideBar', { withoutAnimation: true })
+        } 
+        // 2. 判断是否为平板模式
+        else if (currentWidth < TABLET_WIDTH) {
+          store.dispatch('app/toggleDevice', 'desktop') // 设备模式依然是'desktop'
+          // 但在平板模式下，强制关闭侧边栏（让它变成缩略版）
+          store.dispatch('app/closeSideBar', { withoutAnimation: true })
+        } 
+        // 3. 否则就是桌面模式
+        else {
+          store.dispatch('app/toggleDevice', 'desktop')
+          // 在桌面模式下，强制展开侧边栏
+          store.dispatch('app/openSideBar', { withoutAnimation: true })
         }
       }
     }
