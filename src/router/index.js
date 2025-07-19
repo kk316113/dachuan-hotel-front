@@ -67,7 +67,7 @@ export const constantRoutes = [
     // redirect: '/user/upload',
     meta: {
       title: '用户管理',
-      icon: 'iconfont icon-r-user1'
+      icon: 'iconfont icon-yonghuguanli_huaban'
     },
     children: [{
         path: 'query-user',
@@ -75,7 +75,7 @@ export const constantRoutes = [
         component: () => import('@/views/user/queryuser'),
         meta: {
           title: '用户列表',
-          icon: 'iconfont icon-r-find',
+          icon: 'iconfont icon-user-list',
         }
       },
       {
@@ -84,7 +84,7 @@ export const constantRoutes = [
           component: () => import('@/views/user/changeuser'),
           meta: {
             title: '修改用户',
-            icon: 'iconfont icon-r-edit',
+            icon: 'iconfont icon-xiugai',
           }
         },
     ]
@@ -97,7 +97,7 @@ export const constantRoutes = [
     // redirect: '/user/upload',
     meta: {
       title: '订单管理',
-      icon: 'iconfont icon-r-paper'
+      icon: 'iconfont icon-xiangqingchaxun'
     },
     children: [{
         path: 'order-list',
@@ -105,7 +105,7 @@ export const constantRoutes = [
         component: () => import('@/views/order/orderlist'),
         meta: {
           title: '等待列表',
-          icon: 'iconfont icon-r-team',
+          icon: 'iconfont icon-loading-v',
         }
       },
       {
@@ -114,7 +114,7 @@ export const constantRoutes = [
         component: () => import('@/views/order/historyOrder'),
         meta: {
           title: '订单列表',
-          icon: 'iconfont icon-r-find',
+          icon: 'iconfont icon-dingdanliebiao',
         }
       },
     ]
@@ -126,7 +126,7 @@ export const constantRoutes = [
     // redirect: '/user/upload',
     meta: {
       title: '房间管理',
-      icon: 'iconfont icon-r-building'
+      icon: 'iconfont icon-24gf-building2'
     },
     children: [{
         path: 'room-list',
@@ -134,7 +134,7 @@ export const constantRoutes = [
         component: () => import('@/views/room/roomlist'),
         meta: {
           title: '房间列表',
-          icon: 'iconfont icon-r-list',
+          icon: 'iconfont icon-fangjianliebiao',
         }
       },
       {
@@ -143,7 +143,7 @@ export const constantRoutes = [
         component: () => import('@/views/room/roomsearch'),
         meta: {
           title: '详情查询',
-          icon: 'iconfont icon-r-find',
+          icon: 'iconfont icon-ziliaoku',
         },
       },
       {
@@ -152,7 +152,7 @@ export const constantRoutes = [
         component: () => import('@/views/room/roomadd'),
         meta: {
           title: '添加房间',
-          icon: 'iconfont icon-r-add',
+          icon: 'iconfont icon-tianjiafangjian',
         }
       },
       {
@@ -161,7 +161,7 @@ export const constantRoutes = [
         component: () => import('@/views/room/roomchange'),
         meta: {
           title: '修改房间',
-          icon: 'iconfont icon-r-edit',
+          icon: 'iconfont icon-bianji',
         }
       },
     ]
@@ -175,7 +175,7 @@ export const constantRoutes = [
       component: () => import('@/views/comment/comment'),
       meta: {
         title: '评论列表',
-        icon: 'iconfont icon-r-team'
+        icon: 'iconfont icon-duihua'
       }
     }],
   },
