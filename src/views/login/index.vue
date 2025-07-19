@@ -134,14 +134,13 @@ export default {
         handleLogin() {
             let that = this;
             this.loading = true;
-            // 可自定义登录时的逻辑处理
             this.req({
+                method: 'get',
                 url: "/login",
-                data: {
-                    userName: that.loginForm.username,
+                params: {
+                    adminName: that.loginForm.username,
                     password: that.loginForm.password,
                 },
-                method: "POST",
             }).then(
                 (res) => {
                     if (res.code === 1) {
@@ -155,7 +154,7 @@ export default {
                         this.loading = false;
                         this.$message({
                             showClose: true,
-                            message: e.message || "网络错误",
+                            message: e.message || "用户名或密码错误",
                             type: "error",
                             duration: 0,
                         });

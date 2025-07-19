@@ -155,15 +155,6 @@ export const constantRoutes = [
           icon: 'iconfont icon-tianjiafangjian',
         }
       },
-      {
-        path: 'room-change',
-        name: 'room-change',
-        component: () => import('@/views/room/roomchange'),
-        meta: {
-          title: '修改房间',
-          icon: 'iconfont icon-bianji',
-        }
-      },
     ]
   },
   {
