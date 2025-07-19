@@ -84,31 +84,35 @@
     components: {},
     methods: {
       changeBtn() {
-        this.axios.post("http://localhost:9151/admin/updateUser", this.change)
-          .then(res => {
-            console.log(res);
-            this.dialogVisible = true;
-          })
-          .catch(res => {
-            // console.log("error: " + res);
-          })
+        this.req({
+          url: "/updateUser",
+          method: "post",
+          data: this.change
+        }).then(res => {
+          console.log(res);
+          this.dialogVisible = true;
+        });
       },
+
       queryBtn() {
-        this.axios.post("http://localhost:9151/admin/getUserById?userId=" + this.change.id)
-          .then(res => {
-            console.log(res.data.data);
-            this.change.createTime = res.data.data.createTime;
-            this.change.userName = res.data.data.userName;
-            this.change.password = res.data.data.password;
-            this.change.email = res.data.data.email;
-            this.change.phone = res.data.data.phone;
-            this.change.jifen = res.data.data.jifen;
-            this.change.state = res.data.data.state;
-            this.change.sex = res.data.data.sex;
-          })
-          .catch(res => {
-            console.log("err:" + res);
-          })
+        this.req({
+          url: "/getUserById",
+          method: "post",
+          params: {
+            userId: this.change.id
+          }
+        }).then(res => {
+          const userData = res.data;
+          console.log(userData);
+          this.change.createTime = userData.createTime;
+          this.change.userName = userData.userName;
+          this.change.password = userData.password;
+          this.change.email = userData.email;
+          this.change.phone = userData.phone;
+          this.change.jifen = userData.jifen;
+          this.change.state = userData.state;
+          this.change.sex = userData.sex;
+        });
       }
     },
     computed: {

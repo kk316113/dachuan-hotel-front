@@ -181,32 +181,30 @@ export default {
                 this.addnew.tv +
                 ",早餐:" +
                 this.addnew.breakfast;
-            this.axios
-                .post("http://localhost:9151/admin/addRoom", this.addnew)
-                .then((res) => {
-                    if (res.data.code == "200") {
-                        this.dialogVisible = true;
-                        this.addnew = {
-                            number: "",
-                            type: "",
-                            state: "",
-                            maxPeople: "",
-                            introduce: "",
-
-                            size: "",
-                            people: "",
-                            computer: "有",
-                            hotWater: "有",
-                            wifi: "有",
-                            tv: "有",
-                            breakfast: "有",
-                        };
-                    } else {
-                        this.$message.error(res.data.data);
-                    }
-                })
-                .catch((res) => {
-                    console.log("err: " + res);
+            this.req({
+                url: "/addRoom",
+                method: "post",
+                // 对于 POST/PUT 请求，请求体（payload）使用 data 属性来传递
+                data: this.addnew
+            }).then((res) => {
+                this.dialogVisible = true;
+                // 重置表单
+                this.addnew = {
+                    number: "",
+                    type: "",
+                    state: "",
+                    maxPeople: "",
+                    introduce: "",
+                    size: "",
+                    people: "",
+                    computer: "有",
+                    hotWater: "有",
+                    wifi: "有",
+                    tv: "有",
+                    breakfast: "有",
+                };
+            }).catch(err => {
+                    console.log("请求失败了: ", err);
                 });
         },
     },

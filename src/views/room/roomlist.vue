@@ -41,24 +41,19 @@ export default {
                 type: "warning",
             })
                 .then(() => {
-                    this.axios
-                        .post(
-                            "http://localhost:9151/admin/deleteRoom?roomId=" +
-                                roomId
-                        )
-                        .then((res) => {
-                            this.$message({
-                                type: "success",
-                                message: "删除成功",
-                            });
-                            this.listRooms();
-                        })
-                        .catch((res) => {
-                            this.$message({
-                                type: "error",
-                                message: "删除失败",
-                            });
+                    this.req({
+                        url: "/deleteRoom",
+                        method: "post",
+                        params: {
+                            roomId: roomId,
+                        },
+                    }).then((res) => {
+                        this.$message({
+                            type: "success",
+                            message: "删除成功",
                         });
+                        this.listRooms();
+                    });
                 })
                 .catch(() => {
                     this.$message({
@@ -67,45 +62,41 @@ export default {
                     });
                 });
         },
-        listRooms() {
-            this.axios
-                .get("http://localhost:9151/admin/listRooms")
-                .then((res) => {
-                    // console.log(res.data.data);
-                    this.tableData = res.data.data;
-                    for (var i = 0; i < this.tableData.length; ++i) {
-                        // 房间状态
-                        if (this.tableData[i].state == 0) {
-                            this.tableData[i].state = "空闲";
-                        } else if (this.tableData[i].state == 1) {
-                            this.tableData[i].state = "已入住";
-                        }
 
-                        // 房间类型
-                        switch (this.tableData[i].type) {
-                            case 1:
-                                this.tableData[i].type = "单人房";
-                                break;
-                            case 2:
-                                this.tableData[i].type = "双人房";
-                                break;
-                            case 3:
-                                this.tableData[i].type = "三人房";
-                                break;
-                            case 4:
-                                this.tableData[i].type = "大床房";
-                                break;
-                            case 5:
-                                this.tableData[i].type = "豪华套房";
-                                break;
-                        }
+        listRooms() {
+            this.req({
+                url: "/listRooms",
+                method: "get",
+            }).then((res) => {
+                this.tableData = res.data;
+                for (var i = 0; i < this.tableData.length; ++i) {
+                    if (this.tableData[i].state == 0) {
+                        this.tableData[i].state = "空闲";
+                    } else if (this.tableData[i].state == 1) {
+                        this.tableData[i].state = "已入住";
                     }
-                })
-                .catch((res) => {
-                    console.log("err: " + res);
-                });
+                    switch (this.tableData[i].type) {
+                        case 1:
+                            this.tableData[i].type = "单人房";
+                            break;
+                        case 2:
+                            this.tableData[i].type = "双人房";
+                            break;
+                        case 3:
+                            this.tableData[i].type = "三人房";
+                            break;
+                        case 4:
+                            this.tableData[i].type = "大床房";
+                            break;
+                        case 5:
+                            this.tableData[i].type = "豪华套房";
+                            break;
+                    }
+                }
+            });
         },
     },
+
     mounted() {
         this.listRooms();
     },

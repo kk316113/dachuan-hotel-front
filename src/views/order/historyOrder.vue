@@ -33,31 +33,32 @@ export default {
     },
     methods: {
         listOrders() {
-            this.axios
-                .get("http://localhost:9151/admin/listOrders?orderFlags=1,2,3")
-                .then((res) => {
-                    console.log(res.data.data);
-                    this.tableData = res.data.data;
-                    for (var i = 0; i < this.tableData.length; ++i) {
-                        switch (this.tableData[i].flag) {
-                            case 0:
-                                this.tableData[i].flag = "未处理";
-                                break;
-                            case 1:
-                                this.tableData[i].flag = "办理入住";
-                                break;
-                            case 2:
-                                this.tableData[i].flag = "退订";
-                                break;
-                            case 3:
-                                this.tableData[i].flag = "订单完成";
-                                break;
-                        }
+            this.req({
+                url: "/listOrders",
+                method: "get",
+                params: {
+                    orderFlags: '1,2,3'
+                }
+            }).then((res) => {
+                this.tableData = res.data;
+                console.log(this.tableData);
+                for (var i = 0; i < this.tableData.length; ++i) {
+                    switch (this.tableData[i].flag) {
+                        case 0:
+                            this.tableData[i].flag = "未处理";
+                            break;
+                        case 1:
+                            this.tableData[i].flag = "办理入住";
+                            break;
+                        case 2:
+                            this.tableData[i].flag = "退订";
+                            break;
+                        case 3:
+                            this.tableData[i].flag = "订单完成";
+                            break;
                     }
-                })
-                .catch((res) => {
-                    console.log("err: " + res);
-                });
+                }
+            });
         },
     },
     mounted() {
