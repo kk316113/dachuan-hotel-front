@@ -29,9 +29,6 @@
                         label-position="left">
 
                         <el-form-item prop="username">
-                            <!-- <span class="svg-container">
-                            <svg-icon icon-class="user" />
-                        </span> -->
                             <svg t="1752850529345" class="icon" viewBox="0 0 1024 1024" version="1.1"
                                 xmlns="http://www.w3.org/2000/svg" p-id="8890"
                                 style="width: 26px; height: 26px; margin-left: 10px; vertical-align: middle;">
@@ -101,7 +98,7 @@
 </template>
 
 <script>
-import md5 from "js-md5";
+import request from '@/utils/request'
 export default {
     name: "Login",
     data() {
@@ -139,7 +136,7 @@ export default {
             this.loading = true;
             // 可自定义登录时的逻辑处理
             this.req({
-                url: "http://localhost:9151/admin/login",
+                url: "/login",
                 data: {
                     userName: that.loginForm.username,
                     password: that.loginForm.password,

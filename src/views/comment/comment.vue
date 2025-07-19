@@ -29,13 +29,12 @@
 
     },
     mounted() {
-      this.axios.get("http://localhost:9151/admin/listComment")
-      .then(res => {
-        this.comment = res.data.data;
+      this.req({
+        url: "/listComment",
+        method: "get",
+      }).then(res => {
+        this.comment = res.data;
         console.log(this.comment);
-      })
-      .catch(res => {
-        console.log("res: " + res);
       })
     }
   }

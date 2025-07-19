@@ -60,24 +60,19 @@ export default {
                 type: "success",
             })
                 .then(() => {
-                    this.axios
-                        .post(
-                            "http://localhost:9151/admin/handle?orderId=" +
-                                orderId
-                        )
-                        .then((res) => {
-                            this.$message({
-                                type: "success",
-                                message: "接受订单成功",
-                            });
-                            this.listOrders();
-                        })
-                        .catch((res) => {
-                            this.$message({
-                                type: "error",
-                                message: "接受订单失败",
-                            });
+                    this.req({
+                        url: "/handle",
+                        method: "post",
+                        params: {
+                            orderId: orderId,
+                        },
+                    }).then((res) => {
+                        this.$message({
+                            type: "success",
+                            message: "接受订单成功",
                         });
+                        this.listOrders();
+                    })
                 })
                 .catch(() => {
                     this.$message({
@@ -94,25 +89,19 @@ export default {
                 type: "error",
             })
                 .then(() => {
-                    this.axios
-                        .post(
-                            "http://localhost:9151/admin/unsubscribe?orderId=" +
-                                orderId
-                        )
-                        .then((res) => {
-                            this.$message({
-                                type: "info",
-                                message: "取消订单成功",
-                            });
-                            this.listOrders();
-                        })
-                        .catch((res) => {
-                            this.$message({
-                                type: "info",
-                                message: "取消订单失败",
-                            });
+                    this.req({
+                        url: "/unsubscribe",
+                        method: "post",
+                        params: {
+                            orderId: orderId,
+                        },
+                    }).then((res) => {
+                        this.$message({
+                            type: "info",
+                            message: "取消订单成功",
                         });
-                    this.listOrders();
+                        this.listOrders();
+                    });
                 })
                 .catch(() => {
                     this.$message({
@@ -121,32 +110,34 @@ export default {
                     });
                 });
         },
+
         listOrders() {
-            this.axios
-                .get("http://localhost:9151/admin/listOrders?orderFlags=0")
-                .then((res) => {
-                    console.log(res.data.data);
-                    this.tableData = res.data.data;
-                    for (var i = 0; i < this.tableData.length; ++i) {
-                        switch (this.tableData[i].flag) {
-                            case 0:
-                                this.tableData[i].flag = "未处理";
-                                break;
-                            case 1:
-                                this.tableData[i].flag = "办理入住";
-                                break;
-                            case 2:
-                                this.tableData[i].flag = "退订";
-                                break;
-                            case 3:
-                                this.tableData[i].flag = "订单完成";
-                                break;
-                        }
+            this.req({
+                url: "/listOrders",
+                method: "get",
+                params: {
+                    orderFlags: '0'
+                }
+            }).then((res) => {
+                // 4. 注意数据层级变化
+                this.tableData = res.data;
+                for (var i = 0; i < this.tableData.length; ++i) {
+                    switch (this.tableData[i].flag) {
+                        case 0:
+                            this.tableData[i].flag = "未处理";
+                            break;
+                        case 1:
+                            this.tableData[i].flag = "办理入住";
+                            break;
+                        case 2:
+                            this.tableData[i].flag = "退订";
+                            break;
+                        case 3:
+                            this.tableData[i].flag = "订单完成";
+                            break;
                     }
-                })
-                .catch((res) => {
-                    console.log("err: " + res);
-                });
+                }
+            });
         },
     },
     mounted() {

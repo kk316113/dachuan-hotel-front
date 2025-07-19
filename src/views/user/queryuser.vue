@@ -36,31 +36,25 @@ export default {
     },
     methods: {
         deleteUser(id) {
-            // 删除用户
             this.$confirm("确定删除该用户？", "提示", {
                 confirmButtonText: "确定",
                 cancelButtonText: "取消",
                 type: "warning",
             })
                 .then(() => {
-                    this.axios
-                        .post(
-                            "http://localhost:9151/admin/deleteUser?userId=" +
-                                id
-                        )
-                        .then((res) => {
-                            this.$message({
-                                type: "success",
-                                message: "删除成功",
-                            });
-                            this.listUser();
-                        })
-                        .catch((res) => {
-                            this.$message({
-                                type: "error",
-                                message: "删除失败",
-                            });
+                    this.req({
+                        url: "/deleteUser",
+                        method: "post",
+                        params: {
+                            userId: id,
+                        },
+                    }).then((res) => {
+                        this.$message({
+                            type: "success",
+                            message: "删除成功",
                         });
+                        this.listUser();
+                    });
                 })
                 .catch(() => {
                     this.$message({
@@ -70,27 +64,25 @@ export default {
                 });
         },
         listUser() {
-            this.axios
-                .get("http://localhost:9151/admin/listUsers")
-                .then((res) => {
-                    // console.log(res.data.data);
-                    this.tableData = res.data.data;
-                    for (var i = 0; i < this.tableData.length; i++) {
-                        // 性别
-                        if (this.tableData[i].sex == 0) {
-                            this.tableData[i].sex = "女";
-                        } else if (this.tableData[i].sex == 1) {
-                            this.tableData[i].sex = "男";
-                        }
-
-                        // 状态
-                        if (this.tableData[i].state == 0) {
-                            this.tableData[i].state = "游客";
-                        } else if (this.tableData[i].state == 1) {
-                            this.tableData[i].state = "会员";
-                        }
+            this.req({
+                url: "/listUsers",
+                method: "get",
+            }).then((res) => {
+                this.tableData = res.data;
+                for (var i = 0; i < this.tableData.length; i++) {
+                    if (this.tableData[i].sex == 0) {
+                        this.tableData[i].sex = "女";
+                    } else if (this.tableData[i].sex == 1) {
+                        this.tableData[i].sex = "男";
                     }
-                })
+
+                    if (this.tableData[i].state == 0) {
+                        this.tableData[i].state = "游客";
+                    } else if (this.tableData[i].state == 1) {
+                        this.tableData[i].state = "会员";
+                    }
+                }
+            })
                 .catch((res) => {
                     console.log("err:" + res);
                 });

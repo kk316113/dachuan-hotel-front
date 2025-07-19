@@ -88,21 +88,19 @@ export default {
         });
         return;
       }
-      this.axios.post("http://localhost:9151/admin/roomDetail?roomId=" + this.search.id)
-        .then(res => {
-          if (res.data.code != "200") {
-            this.$message({
-              message: res.data.message,
-              type: "error",
-            });
-            return
-          }
-          this.listData = res.data.data;
-          this.isRealsearch = true;
-        })
-        .catch(res => {
-          console.log("err: " + res);
-        })
+      this.req({
+        url: "/roomDetail",
+        method: "post",
+        params: {
+          roomId: this.search.id
+        }
+      }).then(res => {
+        this.listData = res.data;
+        this.isRealsearch = true;
+      }).catch(err => {
+        this.isRealsearch = false;
+        console.error("查询详情失败: ", err);
+      });
     },
   }
 }

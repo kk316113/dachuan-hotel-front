@@ -168,48 +168,43 @@ export default {
     components: {},
     methods: {
         queryBtn() {
-            this.axios
-                .post(
-                    "http://localhost:9151/admin/roomDetail?roomId=" +
-                        this.change.id
-                )
-                .then((res) => {
-                    this.change.number = res.data.data.room.number;
-                    this.change.type = res.data.data.type.id;
-                    this.change.state = res.data.data.room.state;
-                    this.change.maxPeople = res.data.data.room.maxPeople;
-
-                    this.change.introduce = res.data.data.room.introduce;
-
-                    var parms = this.change.introduce.split(",");
-                    for (var i = 0; i < parms.length; ++i) {
-                        // 填充房间参数详情
-                        var values = parms[i].split(":");
-                        switch (values[0]) {
-                            case "面积":
-                                this.change.size = values[1].replace("m²", "");
-                                break;
-                            case "电脑":
-                                this.change.computer = values[1];
-                                break;
-                            case "热水":
-                                this.change.hotWater = values[1];
-                                break;
-                            case "WIFI":
-                                this.change.wifi = values[1];
-                                break;
-                            case "电视":
-                                this.change.tv = values[1];
-                                break;
-                            case "早餐":
-                                this.change.breakfast = values[1];
-                                break;
-                        }
+            this.req({
+                url: "/roomDetail",
+                method: "post",
+                params: {
+                    roomId: this.change.id
+                }
+            }).then((res) => {
+                this.change.number = res.data.room.number;
+                this.change.type = res.data.type.id;
+                this.change.state = res.data.room.state;
+                this.change.maxPeople = res.data.room.maxPeople;
+                this.change.introduce = res.data.room.introduce;
+                var parms = this.change.introduce.split(",");
+                for (var i = 0; i < parms.length; ++i) {
+                    var values = parms[i].split(":");
+                    switch (values[0]) {
+                        case "面积":
+                            this.change.size = values[1].replace("m²", "");
+                            break;
+                        case "电脑":
+                            this.change.computer = values[1];
+                            break;
+                        case "热水":
+                            this.change.hotWater = values[1];
+                            break;
+                        case "WIFI":
+                            this.change.wifi = values[1];
+                            break;
+                        case "电视":
+                            this.change.tv = values[1];
+                            break;
+                        case "早餐":
+                            this.change.breakfast = values[1];
+                            break;
                     }
-                })
-                .catch((res) => {
-                    console.log("err:" + res);
-                });
+                }
+            });
         },
         changeBtn() {
             if (this.change.number == "") {
@@ -247,20 +242,18 @@ export default {
                 this.change.tv +
                 ",早餐:" +
                 this.change.breakfast;
-            this.axios
-                .post("http://localhost:9151/admin/updateRoom", this.change)
-                .then((res) => {
-                    if (res.data.code == "200") {
-                        this.dialogVisible = true;
-                        this.msgText = "信息修改成功。";
-                    } else {
-                        this.$message.error(res.data.data);
-                    }
-                })
-                .catch((res) => {
-                    this.dialogVisible = true;
-                    this.msgText = "信息修改失败。";
-                });
+            this.req({
+                url: "/updateRoom",
+                method: "post",
+                data: this.change
+            }).then((res) => {
+                this.dialogVisible = true;
+                this.msgText = "信息修改成功。";
+            }).catch((err) => {
+                this.dialogVisible = true;
+                this.msgText = "信息修改失败。";
+                console.log("更新失败: ", err);
+            });
         },
     },
 };
