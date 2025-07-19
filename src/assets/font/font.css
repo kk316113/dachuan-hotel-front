@@ -4,6 +4,13 @@
        url('font.woff?t=1693416579183') format('woff'),
        url('font.ttf?t=1693416579183') format('truetype');
 }
+/* 新加入的iconfont */
+@font-face {
+  font-family: "iconfont"; /* Project id 4978905 */
+  src: url('iconfont.woff2?t=1752892897913') format('woff2'),
+       url('iconfont.woff?t=1752892897913') format('woff'),
+       url('iconfont.ttf?t=1752892897913') format('truetype');
+}
 
 .iconfont {
   font-family: "iconfont" !important;
@@ -121,3 +128,91 @@
   content: "\e60e";
 }
 
+/* 新加入的图标 */
+.icon-xiangqingchaxun:before {
+  content: "\e612";
+}
+
+.icon-tianjiafangjian:before {
+  content: "\e61f";
+}
+
+.icon-xiugai:before {
+  content: "\e8cf";
+}
+
+.icon-user-list:before {
+  content: "\e60c";
+}
+
+.icon-loading-v:before {
+  content: "\e62b";
+}
+
+.icon-dingdanliebiao:before {
+  content: "\e668";
+}
+
+.icon-fangjianliebiao:before {
+  content: "\e6af";
+}
+
+.icon-xiugaiyonghu:before {
+  content: "\e631";
+}
+
+.icon-yonghuguanli_huaban:before {
+  content: "\e62d";
+}
+
+.icon-bianji:before {
+  content: "\e600";
+}
+
+.icon-wenzhang:before {
+  content: "\e601";
+}
+
+.icon-bianjiwenjian:before {
+  content: "\e602";
+}
+
+.icon-dengdaiwenjian:before {
+  content: "\e603";
+}
+
+.icon-shanchuwenjian:before {
+  content: "\e604";
+}
+
+.icon-jianqiewenjian:before {
+  content: "\e605";
+}
+
+.icon-fuzhiwenjian:before {
+  content: "\e606";
+}
+
+.icon-sousuowenjian:before {
+  content: "\e607";
+}
+
+.icon-ziliaoku:before {
+  content: "\e608";
+}
+
+.icon-guanliyuan:before {
+  content: "\e609";
+}
+
+.icon-duihua:before {
+  content: "\e60a";
+}
+
+.icon-bianji1:before {
+  content: "\e60b";
+}
+
+.icon-24gf-building2:before {
+  content: "\e838";
+}
