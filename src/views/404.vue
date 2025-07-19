@@ -8,7 +8,7 @@
         <img class="pic-404__child right" src="@/assets/404_images/404_cloud.png" alt="404">
       </div>
       <div class="bullshit">
-        <div class="bullshit__oops">啊这。。。</div>
+        <div class="bullshit__oops">页面走丢了......</div>
         <div class="bullshit__headline">{{ message }}</div>
         <div class="bullshit__info">请检查你的URL地址是否正确，或者点击下方按钮返回主页。</div>
         <a href="" class="bullshit__return-home">回到主页</a>
