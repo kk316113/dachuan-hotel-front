@@ -3,16 +3,16 @@
     <el-col :span="8" :offset="8">
       <div class="change-form">
         <div class="text item">
-          <p class="change-title">输入修改用户id</p>
+          <p class="change-title">输入修改用户信息</p>
           <el-form :model="change" status-icon ref="change" label-width="80px">
             <el-form-item label="id" prop="id">
               <el-input type="text" v-model="change.id"></el-input>
             </el-form-item>
           </el-form>
-          <el-button type="primary" @click="queryBtn" class="changebtn mb-1" style="font-size: 18px;">
+          <!-- <el-button type="primary" @click="queryBtn" class="changebtn mb-1" style="font-size: 18px;">
              查询
-          </el-button>
-          <p class="change-title">输入修改信息</p>
+          </el-button> -->
+          <!-- <p class="change-title">输入修改信息</p> -->
           <el-form :model="change" status-icon ref="change" label-width="80px">
             <el-form-item label="用户名" prop="username">
               <el-input type="text" v-model="change.userName"></el-input>
@@ -83,6 +83,17 @@
     },
     components: {},
     methods: {
+      mounted() {
+        const query = this.$route.query;
+        if (query.id) this.change.id = query.id;
+        if (query.sex) {
+          if(query.sex == '男') this.change.sex = "1";
+          else this.change.sex = "0";
+        } 
+        if (query.email) this.change.email = query.email;
+        if (query.phone) this.change.phone = query.phone;
+        if (query.userName) this.change.userName = query.userName;
+      },
       changeBtn() {
         this.req({
           url: "/updateUser",
@@ -94,26 +105,26 @@
         });
       },
 
-      queryBtn() {
-        this.req({
-          url: "/getUserById",
-          method: "post",
-          params: {
-            userId: this.change.id
-          }
-        }).then(res => {
-          const userData = res.data;
-          console.log(userData);
-          this.change.createTime = userData.createTime;
-          this.change.userName = userData.userName;
-          this.change.password = userData.password;
-          this.change.email = userData.email;
-          this.change.phone = userData.phone;
-          this.change.jifen = userData.jifen;
-          this.change.state = userData.state;
-          this.change.sex = userData.sex;
-        });
-      }
+      // queryBtn() {
+      //   this.req({
+      //     url: "/getUserById",
+      //     method: "post",
+      //     params: {
+      //       userId: this.change.id
+      //     }
+      //   }).then(res => {
+      //     const userData = res.data;
+      //     console.log(userData);
+      //     this.change.createTime = userData.createTime;
+      //     this.change.userName = userData.userName;
+      //     this.change.password = userData.password;
+      //     this.change.email = userData.email;
+      //     this.change.phone = userData.phone;
+      //     this.change.jifen = userData.jifen;
+      //     this.change.state = userData.state;
+      //     this.change.sex = userData.sex;
+      //   });
+      // }
     },
     computed: {
       showgender() {

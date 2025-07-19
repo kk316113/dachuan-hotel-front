@@ -21,6 +21,17 @@ import '@/assets/custom.css'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 
+import zhLocale from 'element-ui/lib/locale/lang/zh-CN';
+zhLocale.el.pagination = {
+  goto: '跳至',
+  pagesize: '条/页',
+  total: `共计 {total} 条`,
+  pageClassifier: '页',
+};
+Vue.use(ElementUI, {
+  locale: zhLocale,
+});
+
 axios.defaults.withCredentials = true;
 Vue.use(VueAxios, axios);
 
