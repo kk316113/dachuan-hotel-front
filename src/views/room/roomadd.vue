@@ -1,8 +1,3 @@
-<!--
- * @Description: 
- * @Author: 
- * @Date: 2024-03-11 13:37:23
--->
 <template>
     <el-row>
         <el-col :span="8" :offset="8">

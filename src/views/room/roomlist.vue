@@ -1,8 +1,3 @@
-<!--
- * @Description: 
- * @Author: 
- * @Date: 2024-03-11 13:37:23
--->
 <template>
     <div class="user-table">
         <el-table :data="tableData" stripe style="width: 100%">
