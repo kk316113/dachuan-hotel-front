@@ -2,7 +2,10 @@
     <div class="user-table">
           <div style="margin-bottom: 20px;">
             <el-input v-model="queryName" placeholder="用户名" style="width: 180px; margin-right: 10px;" clearable />
-            <el-input v-model="querySex" placeholder="性别(0女/1男)" style="width: 200px; margin-right: 10px;" clearable />
+            <el-select v-model="querySex" placeholder="性别" style="width: 120px; margin-right: 10px;" clearable>
+                <el-option label="男" :value="1"></el-option>
+                <el-option label="女" :value="0"></el-option>
+            </el-select>
             <el-input v-model="queryEmail" placeholder="邮箱" style="width: 180px; margin-right: 10px;" clearable />
             <el-input v-model="queryPhone" placeholder="手机号" style="width: 180px; margin-right: 10px;" clearable />
             <el-button type="primary" @click="listUser">查询</el-button>
@@ -29,6 +32,7 @@
                                 phone: scope.row.phone,
                                 email: scope.row.email,
                                 userName: scope.row.userName,
+                                state: scope.row.state,
                             }
                         })"
                         style="font-size: 18px;"

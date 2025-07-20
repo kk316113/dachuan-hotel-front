@@ -86,18 +86,16 @@
       mounted() {
         const query = this.$route.query;
         if (query.id) this.change.id = query.id;
-        if (query.sex) {
-          if(query.sex == '男') this.change.sex = "1";
-          else this.change.sex = "0";
-        } 
+        if (query.sex)this.change.sex = query.sex;
         if (query.email) this.change.email = query.email;
         if (query.phone) this.change.phone = query.phone;
         if (query.userName) this.change.userName = query.userName;
+        if(query.state) this.change.state = query.state;
       },
       changeBtn() {
         this.req({
-          url: "/updateUser",
-          method: "post",
+          url: "/user",
+          method: "put",
           data: this.change
         }).then(res => {
           console.log(res);
