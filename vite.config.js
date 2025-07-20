@@ -11,12 +11,13 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  server: {
+   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',  // 后端服务地址
-        changeOrigin: true,               // 修改请求头中的 origin
-        rewrite: path => path.replace(/^\/api/, '') // 去掉 /api 前缀
+        target: 'http://localhost:8080', // 目标是你的 JSON Server
+        changeOrigin: true,
+        // 核心：这行代码确保将 /api/rooms 变成 /rooms
+        rewrite: path => path.replace(/^\/api/, '') 
       }
     }
   }

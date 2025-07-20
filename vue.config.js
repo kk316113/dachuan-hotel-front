@@ -38,12 +38,10 @@ module.exports = {
       errors: true
     },
     proxy: {
-      // detail: https://cli.vuejs.org/config/#devserver-proxy
-      '/admin': {
-        target: `http://localhost:9151/`,
+      '/api': {
+        target: 'http://localhost:8080/',
         changeOrigin: true,
-        pathRewrite: {
-        }
+        pathRewrite: { '^/api': '' }  // 去掉前缀，转发为 /rooms
       }
     }
   },

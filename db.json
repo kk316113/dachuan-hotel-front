@@ -1,0 +1,40 @@
+{
+  "rooms": {
+    "code": 1,
+    "msg": "success",
+    "data": [
+      {
+        "id": 101,
+        "number": "101",
+        "type": { "id": 4, "typeName": "大床房", "price": 350 },
+        "state": 0,
+        "maxPeople": 2,
+        "introduce": "来自 JSON Server：视野开阔的大床房。"
+      },
+      {
+        "id": 202,
+        "number": "202",
+        "type": { "id": 2, "typeName": "双人房", "price": 420 },
+        "state": 1,
+        "maxPeople": 2,
+        "introduce": "来自 JSON Server：适合朋友出游的双人房。"
+      },
+      {
+        "id": 508,
+        "number": "508",
+        "type": { "id": 5, "typeName": "豪华套房", "price": 880 },
+        "state": 0,
+        "maxPeople": 3,
+        "introduce": "来自 JSON Server：尊贵的豪华套房体验。"
+      }
+    ]
+  },
+  "users": [
+    {
+      "id": 1,
+      "userName": "张三 (mock)",
+      "sex": "男",
+      "state": "会员"
+    }
+  ]
+}
