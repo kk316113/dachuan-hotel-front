@@ -93,11 +93,12 @@
         if (query.email) this.change.email = query.email;
         if (query.phone) this.change.phone = query.phone;
         if (query.userName) this.change.userName = query.userName;
+        if(query.state) this.change.state = query.state;
       },
       changeBtn() {
         this.req({
-          url: "/updateUser",
-          method: "post",
+          url: "/user",
+          method: "put",
           data: this.change
         }).then(res => {
           console.log(res);

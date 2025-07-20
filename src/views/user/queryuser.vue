@@ -29,6 +29,7 @@
                                 phone: scope.row.phone,
                                 email: scope.row.email,
                                 userName: scope.row.userName,
+                                state: scope.row.state,
                             }
                         })"
                         style="font-size: 18px;"
