@@ -1,0 +1,102 @@
+{
+  "rooms": {
+    "code": 1,
+    "msg": "success",
+    "data": [
+      {
+        "id": 101,
+        "number": "101",
+        "type": {
+          "id": 4,
+          "typeName": "大床房",
+          "price": 350
+        },
+        "state": 0,
+        "maxPeople": 2,
+        "introduce": "来自 JSON Server：视野开阔的大床房。"
+      },
+      {
+        "id": 202,
+        "number": "202",
+        "type": {
+          "id": 2,
+          "typeName": "双人房",
+          "price": 420
+        },
+        "state": 1,
+        "maxPeople": 2,
+        "introduce": "来自 JSON Server：适合朋友出游的双人房。"
+      },
+      {
+        "id": 508,
+        "number": "508",
+        "type": {
+          "id": 5,
+          "typeName": "豪华套房",
+          "price": 880
+        },
+        "state": 0,
+        "maxPeople": 3,
+        "introduce": "来自 JSON Server：尊贵的豪华套房体验。"
+      }
+    ]
+  },
+  "users": [
+    {
+      "id": "1",
+      "userName": "张三 (mock)",
+      "sex": "男",
+      "state": "会员"
+    }
+  ],
+  "orders": [
+    {
+      "id": 1001,
+      "userId": 501,
+      "roomId": 301,
+      "inTime": "2025-07-20 14:00:00",
+      "actualInTime": null,
+      "leaveTime": "2025-07-22 12:00:00",
+      "createTime": "2025-07-15 10:25:33",
+      "realPrice": 599.00,
+      "realPeople": 2,
+      "flag": 0
+    },
+    {
+      "id": 1002,
+      "userId": 502,
+      "roomId": 202,
+      "inTime": "2025-07-21 18:00:00",
+      "actualInTime": null,
+      "leaveTime": "2025-07-23 12:00:00",
+      "createTime": "2025-07-16 11:20:15",
+      "realPrice": 699.00,
+      "realPeople": 1,
+      "flag": 0
+    },
+    {
+      "id": 1003,
+      "userId": 503,
+      "roomId": 508,
+      "inTime": "2025-07-18 14:00:00",
+      "actualInTime": "2025-07-18 14:30:00",
+      "leaveTime": "2025-07-20 12:00:00",
+      "createTime": "2025-07-17 09:15:00",
+      "realPrice": 1760.00,
+      "realPeople": 3,
+      "flag": 1
+    },
+    {
+      "id": 1004,
+      "userId": 504,
+      "roomId": 101,
+      "inTime": "2025-07-19 15:00:00",
+      "actualInTime": null,
+      "leaveTime": "2025-07-20 12:00:00",
+      "createTime": "2025-07-18 16:45:00",
+      "realPrice": 350.00,
+      "realPeople": 1,
+      "flag": 2
+    }
+  ]
+}

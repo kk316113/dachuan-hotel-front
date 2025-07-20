@@ -1,74 +1,128 @@
 <template>
-    <div class="user-table">
-        <el-table :data="tableData" stripe style="width: 100%">
-            <el-table-column prop="id" label="id"> </el-table-column>
-            <el-table-column prop="userId" label="用户id"> </el-table-column>
-            <el-table-column prop="roomId" label="房间id"> </el-table-column>
-            <el-table-column prop="createTime" label="下单时间">
-            </el-table-column>
-            <el-table-column prop="inTime" label="入住时间"> </el-table-column>
-            <el-table-column prop="leaveTime" label="离店时间">
-            </el-table-column>
-            <el-table-column prop="realPrice" label="总计价格">
-            </el-table-column>
-            <el-table-column prop="realPeople" label="入住人数">
-            </el-table-column>
-            <el-table-column label="发票">
-                <template slot-scope="scope">
-                    <span v-if="scope.row.fapiao == 1">需要</span>
-                    <span v-if="scope.row.fapiao == 0">不需要</span>
-                </template>
-            </el-table-column>
-            <el-table-column prop="flag" label="受理状态"> </el-table-column>
-        </el-table>
+  <div class="user-table">
+    <div class="content-card">
+      <el-table v-loading="loading" :data="tableData" stripe style="width: 100%">
+        <el-table-column prop="id" label="订单ID" align="center" width="80"></el-table-column>
+        <el-table-column prop="userId" label="用户ID" align="center" width="80"></el-table-column>
+        <el-table-column prop="roomId" label="房间ID" align="center" width="80"></el-table-column>
+        <el-table-column prop="createTime" label="下单时间" align="center" width="180"></el-table-column>
+        <el-table-column prop="inTime" label="预定入住时间" align="center" width="180"></el-table-column>
+        <el-table-column prop="realPrice" label="总价" align="center">
+            <template slot-scope="{row}">¥{{ row.realPrice }}</template>
+        </el-table-column>
+        <el-table-column prop="realPeople" label="入住人数" align="center"></el-table-column>
+        <el-table-column prop="flag" label="订单状态" align="center">
+            <template slot-scope="{row}">
+                <el-tag :type="getTagType(row.flag)">{{ getFlagText(row.flag) }}</el-tag>
+            </template>
+        </el-table-column>
+      </el-table>
     </div>
+  </div>
 </template>
 
+<!-- <script>
+export default {
+  data() {
+    return {
+      tableData: [],
+      loading: false,
+    };
+  },
+  methods: {
+    // 【真实 API 版】
+    listProcessedOrders() {
+      this.loading = true;
+      this.req({
+        url: "/orders/complete", // 严格遵循 API 文档的路径
+        method: "get",
+        // 此接口无需参数
+      }).then((res) => {
+        // 真实 API 返回的是 { code, data } 对象，我们需要的是 res.data
+        this.tableData = res.data;
+        this.loading = false;
+      }).catch(err => {
+        this.loading = false;
+        console.error("获取已处理订单失败:", err);
+      });
+    },
+    // 辅助方法，用于在表格中显示状态文字
+    getFlagText(flag) {
+        switch (flag) {
+            case 1: return "已入住";
+            case 2: return "已退订";
+            case 3: return "已完成";
+            default: return "未知状态";
+        }
+    },
+    // 辅助方法，用于返回不同状态的标签颜色
+    getTagType(flag) {
+        switch (flag) {
+            case 1: return "success";
+            case 2: return "warning";
+            case 3: return "info";
+            default: return "primary";
+        }
+    }
+  },
+  created() {
+    this.listProcessedOrders();
+  },
+};
+</script> -->
+//test
 <script>
 export default {
-    data() {
-        return {
-            tableData: [],
-        };
+  data() {
+    return {
+      tableData: [],
+      loading: false,
+    };
+  },
+  methods: {
+    // 【Mock 适配版】
+    listProcessedOrders() {
+      this.loading = true;
+      this.req({
+        url: "/orders",
+        method: "get",
+        // 使用 json-server 的 _ne (not equal) 功能来筛选
+        params: { flag_ne: 0 },
+      }).then((res) => {
+        // json-server 直接返回数组，所以 res 就是我们需要的数据
+        this.tableData = res; 
+        this.loading = false;
+      }).catch(err => {
+        this.loading = false;
+        console.error("获取已处理订单失败:", err);
+      });
     },
-    methods: {
-        listOrders() {
-            this.req({
-                url: "/listOrders",
-                method: "get",
-                params: {
-                    orderFlags: '1,2,3'
-                }
-            }).then((res) => {
-                this.tableData = res.data;
-                console.log(this.tableData);
-                for (var i = 0; i < this.tableData.length; ++i) {
-                    switch (this.tableData[i].flag) {
-                        case 0:
-                            this.tableData[i].flag = "未处理";
-                            break;
-                        case 1:
-                            this.tableData[i].flag = "办理入住";
-                            break;
-                        case 2:
-                            this.tableData[i].flag = "退订";
-                            break;
-                        case 3:
-                            this.tableData[i].flag = "订单完成";
-                            break;
-                    }
-                }
-            });
-        },
+    // 辅助方法，用于在表格中显示状态文字
+    getFlagText(flag) {
+        switch (flag) {
+            case 1: return "已入住";
+            case 2: return "已退订";
+            case 3: return "订单完成";
+            default: return "未知状态";
+        }
     },
-    mounted() {
-        this.listOrders();
-    },
+    // 辅助方法，用于返回不同状态的标签颜色
+    getTagType(flag) {
+        switch (flag) {
+            case 1: return "success";
+            case 2: return "warning";
+            case 3: return "info";
+            default: return "primary";
+        }
+    }
+  },
+  created() {
+    this.listProcessedOrders();
+  },
 };
 </script>
-
-<style>
+<style scoped>
 .user-table {
-    margin: 2rem;
+  margin: 2rem;
 }
 </style>
