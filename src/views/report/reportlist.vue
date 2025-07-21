@@ -26,6 +26,27 @@ export default {
         // ...可以继续补充
       ]
     };
+  },
+  methods: {
+    listReport() {
+      this.loading = true;
+      this.req({
+        url: "/report/incomeMonthly",
+        method: "get",
+      })
+        .then((res) => {
+          // --- 唯一的、最关键的修改在这里 ---
+          // 从返回的对象 res 中，取出 data 属性（即房间数组）
+          this.tableData = res.data;
+          this.loading = false;
+        })
+        .catch((err) => {
+          console.error("获取房间列表失败:", err);
+          this.loading = false;
+        });
+    },
+  }, mounted() {
+    this.listReport();
   }
 };
 </script>

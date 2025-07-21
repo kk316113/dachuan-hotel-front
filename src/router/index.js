@@ -178,16 +178,16 @@ export const constantRoutes = [
         icon: 'iconfont icon-r-list'
       },
     children: [{
-      path: '/report',
-      name: '/report',
+      path: '/reportlist',
+      name: '/reportlist',
       component: () => import('@/views/report/reportlist'),
       meta: {
         title: '报表统计',
         icon: 'iconfont icon-wenzhang'
       }
     },{
-      path: '/report',
-      name: '/report',
+      path: '/rtypeSale',
+      name: '/rtypeSale',
       component: () => import('@/views/report/rtypeSale'),
       meta: {
         title: '房型销量',
