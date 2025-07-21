@@ -8,6 +8,11 @@
         <el-table :data="tableData" style="width: 100%; margin-bottom: 30px;">
           <el-table-column prop="month" label="月份" width="120"></el-table-column>
           <el-table-column prop="revenue" label="营业额（元）"></el-table-column>
+          <el-table-column label="柱状图">
+            <template slot-scope="scope">
+              <div class="bar" :style="{width: (scope.row.revenue / maxRevenue * 200) + 'px'}"></div>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
     </el-card>
@@ -26,6 +31,12 @@ export default {
         // ...可以继续补充
       ]
     };
+  },
+    computed: {
+    maxRevenue() {
+      // 取最大值，避免除以0
+      return Math.max(...this.tableData.map(item => item.revenue), 1);
+    }
   },
   methods: {
     listReport() {
@@ -63,5 +74,12 @@ export default {
 .report-title {
   font-size: 22px;
   font-weight: bold;
+}
+.bar {
+  height: 20px;
+  background: #409EFF;
+  border-radius: 4px;
+  transition: width 0.3s;
+  display: inline-block;
 }
 </style>
