@@ -170,6 +170,19 @@ export const constantRoutes = [
       }
     }],
   },
+  {
+    path: '/report',
+    component: Layout,
+    children: [{
+      path: '/report',
+      name: '/report',
+      component: () => import('@/views/report/report'),
+      meta: {
+        title: '报表统计',
+        icon: 'iconfont icon-wenzhang'
+      }
+    }],
+  },
   // 404 page must be placed at the end !!!
   {
     path: '*',
