@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
+import router from '@/router' // 1. 引入 router 用于跳转页面
 
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API || '/api',
@@ -21,30 +22,23 @@ service.interceptors.request.use(
   }
 )
 
-// --- 核心修改：响应拦截器 ---
+// 响应拦截器
 service.interceptors.response.use(
   /**
-   * 智能响应处理器
-   * 它会识别响应的数据格式，并始终尝试返回最核心的数据部分给 .then() 回调
+   * 成功响应处理部分 - 【完全保持不变】
+   * 你的智能响应处理器，可以同时处理来自 json-server 和真实后端的数据
    */
   response => {
     const res = response.data
 
-    // 1. 如果返回的数据直接就是个数组 (通常来自 json-server 的列表请求)
-    //    直接返回这个数组，让组件接收。
     if (Array.isArray(res)) {
       return res
     }
 
-    // 2. 如果返回的是我们标准的对象格式 (通常来自真实后端)
-    //    检查 code 字段来判断业务是否成功。
     if (res && typeof res.code !== 'undefined') {
       if (res.code === 1) {
-        // 业务成功，只返回核心的 data 部分。
-        // 组件的 .then(data => ...) 中，data 就是我们需要的数组或对象。
         return res.data
       } else {
-        // 业务失败 (例如 code: 0)，弹出错误消息并中断 Promise 链。
         Message({
           message: res.msg || 'Error',
           type: 'error',
@@ -53,19 +47,38 @@ service.interceptors.response.use(
         return Promise.reject(new Error(res.msg || 'Error'))
       }
     }
-
-    // 3. 如果返回的是一个没有 code 字段的对象 (通常来自 json-server 的增删改操作)
-    //    我们也认为它是成功的，直接返回整个对象。
+    
     return res
   },
+  /**
+   * 错误响应处理部分 - 【只在这里增加 401 判断】
+   */
   error => {
-    // 处理网络层面的错误 (保持不变)
-    console.error('响应错误', error)
-    Message({
-      message: error.message || '网络错误',
-      type: 'error',
-      duration: 2000
-    })
+    // 2. 检查响应错误，并判断是否为 401 状态码
+    if (error.response && error.response.status === 401) {
+      // 如果是 401 (Token 失效或未授权)
+      Message({
+        message: '登录已过期，请重新登录',
+        type: 'error',
+        duration: 3 * 1000
+      })
+      // 清除本地存储的所有用户信息
+      localStorage.removeItem('token');
+      localStorage.removeItem('userInfo');
+      localStorage.removeItem('hasLogin');
+      
+      // 跳转到登录页
+      router.push('/login');
+
+    } else {
+      // 如果是其他网络错误，执行原来的逻辑
+      console.error('响应错误', error)
+      Message({
+        message: error.message || '网络错误',
+        type: 'error',
+        duration: 2000
+      })
+    }
     return Promise.reject(error)
   }
 )

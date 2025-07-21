@@ -1,8 +1,3 @@
-<!--
- * @Description: 
- * @Author: 
- * @Date: 2024-03-11 13:37:23
--->
 <template>
   <div :class="{'has-logo':showLogo}">
     <logo v-if="showLogo" :collapse="isCollapse" />

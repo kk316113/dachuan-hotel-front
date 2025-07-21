@@ -79,118 +79,85 @@
             </el-card>
             <!-- 注意事项 -->
             <div class="login-notice">
-                <h3>注意事项</h3>
-                <ul>
-                    <li>
-                        <strong>账户安全：</strong>此系统为酒店核心资产，请妥善保管您的账户密码，<strong>严禁与他人共享</strong>。所有通过您账户进行的操作均会被记录，并视为您的个人行为。
-                    </li>
-                    <li>
-                        <strong>数据隐私：</strong>系统包含客户高度敏感信息（如身份、联系方式），<strong>严禁非法查询、复制或外泄</strong>，违者将承担法律责任。
-                    </li>
-                    <li>
-                        <strong>操作规范：</strong>进行预订、入住、退房等关键操作时，请务必<strong>仔细核对信息</strong>，确保数据准确无误，以免造成运营混乱或客户投诉。
-                    </li>
-                    <li>
-                        <strong>安全习惯：</strong>离开工位时，请务必<strong>锁定电脑或退出系统</strong>，防止信息泄露。如遇操作问题或发现异常，请立即联系IT部门或您的主管。
-                    </li>
-                </ul>
-            </div>
+    <h3>注意事项</h3>
+    <ul>
+        <li>
+            <strong>账户安全：</strong>此系统为酒店核心资产，请妥善保管您的账户密码，<strong>严禁与他人共享</strong>。所有通过您账户进行的操作均会被记录，并视为您的个人行为。
+        </li>
+        <li>
+            <strong>数据隐私：</strong>本系统包含客户的个人信息（如姓名、手机号、邮箱）以及详细的订单记录。<strong>严禁</strong>将这些信息用于非工作用途，或以任何形式非法查询、复制或外泄，违者将承担相应的法律责任。
+        </li>
+        <li>
+            <strong>操作规范：</strong>请对所有关键操作保持高度警惕。处理<b>订单管理</b>时，【入住】和【取消订单】操作不可逆转；进行<b>房间管理</b>时，请确保信息准确，以免造成预订系统混乱；在<b>用户管理</b>中，【删除】用户为高危操作，执行前请再三确认。
+        </li>
+        <li>
+            <strong>安全习惯：</strong>离开工位时，请务必<strong>锁定电脑或退出系统</strong>，防止信息泄露。如遇操作问题或发现系统异常，请立即联系IT部门或您的主管。
+        </li>
+    </ul>
+</div>
         </div>
     </div>
 </template>
 
 <script>
-import request from '@/utils/request'
 export default {
-    name: "Login",
-    data() {
-        return {
-            loginForm: {
-                username: "",
-                password: "",
-            },
-            loading: false,
-            passwordType: "password",
-            redirect: undefined,
-        };
+  name: "Login",
+  data() {
+    return {
+      loginForm: {
+        username: "",
+        password: "",
+      },
+      loading: false,
+      passwordType: "password",
+      redirect: undefined,
+    };
+  },
+  watch: {
+    $route: {
+      handler: function (route) {
+        this.redirect = route.query && route.query.redirect;
+      },
+      immediate: true,
     },
-    watch: {
-        $route: {
-            handler: function (route) {
-                this.redirect = route.query && route.query.redirect;
-            },
-            immediate: true,
-        },
+  },
+  methods: {
+    showPwd() {
+      if (this.passwordType === "password") {
+        this.passwordType = "";
+      } else {
+        this.passwordType = "password";
+      }
+      this.$nextTick(() => {
+        this.$refs.password.focus();
+      });
     },
-    methods: {
-        showPwd() {
-            if (this.passwordType === "password") {
-                this.passwordType = "";
-            } else {
-                this.passwordType = "password";
-            }
-            this.$nextTick(() => {
-                this.$refs.password.focus();
-            });
+    // 【最终版】handleLogin 方法
+    handleLogin() {
+      this.loading = true;
+      this.req({
+        method: 'get',
+        url: "/login",
+        params: {
+          adminName: this.loginForm.username,
+          password: this.loginForm.password,
         },
-        handleLogin() {
-            let that = this;
-            this.loading = true;
-            this.req({
-                method: 'get',
-                url: "/login",
-                params: {
-                    adminName: that.loginForm.username,
-                    password: that.loginForm.password,
-                },
-            }).then(
-                (res) => {
-                    if (res.code === 1) {
-                        // 登录成功处理
-                        localStorage.setItem("hasLogin", true);
-                        localStorage.setItem("token", res.data.token);
-                        localStorage.setItem("userInfo", JSON.stringify(res.data));
-                        this.$router.push({ path: "/home" });
-                    } else {
-                        this.passwordError = true;
-                        this.loading = false;
-                        this.$message({
-                            showClose: true,
-                            message: e.message || "用户名或密码错误",
-                            type: "error",
-                            duration: 0,
-                        });
-                    }
-                },
-                (e) => {
-                    // 网络请求本身失败（如服务器挂了、跨域、断网）
-                    this.passwordError = true;
-                    this.loading = false;
-                    if (!e.response || e.response.data == undefined) {
-                        this.$message({
-                            showClose: true,
-                            message: e.message || "请求失败",
-                            type: "error",
-                            duration: 0,
-                        });
-                    } else {
-                        this.$message({
-                            showClose: true,
-                            message: e.response.data || "服务错误",
-                            type: "error",
-                            duration: 0,
-                        });
-                    }
-                }
-            );
-        },
+      }).then(data => {
+        // 拦截器已确保请求成功，data 就是后端返回的 data 对象
+        localStorage.setItem("hasLogin", "true");
+        localStorage.setItem("token", data.token); // 直接从 data 中获取 token
+        localStorage.setItem("userInfo", JSON.stringify(data)); // 保存用户信息
+        this.$router.push({ path: this.redirect || "/home" });
+      }).catch(() => {
+        // 拦截器已弹出错误消息，这里只需要处理 UI 状态
+        this.loading = false;
+      });
     },
+  },
 };
 </script>
 
 <style lang="scss">
-/* 修复input 背景不协调 和光标变色 */
-/* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 $bg: #283443;
 $light_gray: #303133;
 $cursor: #303133;
