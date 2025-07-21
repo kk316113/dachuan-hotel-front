@@ -1,5 +1,7 @@
 <template>
     <div class="login-container">
+         <!-- 左上角logo -->
+        <img src="@/assets/logo.png" alt="logo" class="login-logo" />
         <div class="login-box-wrapper">
             <el-card class="box-card">
                 <div class="text item">
@@ -192,6 +194,13 @@ export default {
 $bg: #283443;
 $light_gray: #303133;
 $cursor: #303133;
+.login-logo {
+    position: absolute;
+    top: 32px;
+    left: 32px;
+    height: 200px;
+    z-index: 100;
+}
 
 .login-box-wrapper {
     display: flex;
