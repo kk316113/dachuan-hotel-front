@@ -170,6 +170,31 @@ export const constantRoutes = [
       }
     }],
   },
+  {
+    path: '/report',
+    component: Layout,
+    meta: {
+        title: '报表统计',
+        icon: 'iconfont icon-r-list'
+      },
+    children: [{
+      path: '/reportlist',
+      name: '/reportlist',
+      component: () => import('@/views/report/reportlist'),
+      meta: {
+        title: '报表统计',
+        icon: 'iconfont icon-wenzhang'
+      }
+    },{
+      path: '/rtypeSale',
+      name: '/rtypeSale',
+      component: () => import('@/views/report/rtypeSale'),
+      meta: {
+        title: '房型销量',
+        icon: 'iconfont icon-r-setting'
+      }
+    }],
+  },
   // 404 page must be placed at the end !!!
   {
     path: '*',
