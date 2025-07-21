@@ -158,19 +158,6 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/comment',
-    component: Layout,
-    children: [{
-      path: '/comment',
-      name: '/comment',
-      component: () => import('@/views/comment/comment'),
-      meta: {
-        title: '评论列表',
-        icon: 'iconfont icon-duihua'
-      }
-    }],
-  },
-  {
     path: '/report',
     component: Layout,
     meta: {
