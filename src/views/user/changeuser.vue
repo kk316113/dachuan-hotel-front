@@ -1,142 +1,118 @@
 <template>
-  <el-row>
-    <el-col :span="8" :offset="8">
-      <div class="change-form">
-        <div class="text item">
-          <p class="change-title">输入修改用户信息</p>
-          <el-form :model="change" status-icon ref="change" label-width="80px">
-            <el-form-item label="id" prop="id">
-              <el-input type="text" v-model="change.id"></el-input>
+  <div class="app-container">
+    <el-row>
+      <el-col :span="16" :offset="4">
+        <div class="content-card">
+          <div class="card-header">
+            <span>修改用户信息</span>
+          </div>
+          <el-form v-if="userForm.id" :model="userForm" :rules="rules" ref="userFormRef" label-width="100px" class="change-form">
+            <el-form-item label="用户ID">
+              <el-input :value="userForm.id" disabled></el-input>
             </el-form-item>
-          </el-form>
-          <!-- <el-button type="primary" @click="queryBtn" class="changebtn mb-1" style="font-size: 18px;">
-             查询
-          </el-button> -->
-          <!-- <p class="change-title">输入修改信息</p> -->
-          <el-form :model="change" status-icon ref="change" label-width="80px">
-            <el-form-item label="用户名" prop="username">
-              <el-input type="text" v-model="change.userName"></el-input>
+            <el-form-item label="用户名" prop="user_name">
+              <el-input v-model="userForm.user_name" placeholder="请输入用户名"></el-input>
             </el-form-item>
-            <el-form-item label="创建时间" prop="username">
-              <el-input type="datetime" v-model="change.createTime"></el-input>
-            </el-form-item>
-            <el-form-item label="密码" prop="password">
-              <el-input type="text" v-model="change.password" disabled="disabled"></el-input>
-            </el-form-item>
-            <el-form-item label="积分" prop="jifenb">
-              <el-input type="text" v-model="change.jifen"></el-input>
-            </el-form-item>
-            <el-form-item label="手机号码" prop="phone">
-              <el-input type="text" v-model="change.phone"></el-input>
-            </el-form-item>
-            <el-form-item label="邮箱" prop="email">
-              <el-input type="email" v-model="change.email"></el-input>
-            </el-form-item>
-            <el-form-item label="性别" prop="gender">
-              <el-select v-model="change.sex" placeholder="请选择">
-                <el-option label="男(1)" value="1"></el-option>
-                <el-option label="女(0)" value="0"></el-option>
+            <el-form-item label="性别" prop="sex">
+              <el-select v-model="userForm.sex" placeholder="请选择性别" style="width:100%;">
+                <el-option label="男" :value="1"></el-option>
+                <el-option label="女" :value="0"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="账号状态" prop="state">
-              <el-input type="text" v-model="change.state"></el-input>
+            <el-form-item label="手机号码" prop="phone">
+              <el-input v-model="userForm.phone" placeholder="请输入手机号码"></el-input>
+            </el-form-item>
+            <el-form-item label="邮箱" prop="email">
+              <el-input v-model="userForm.email" placeholder="请输入邮箱"></el-input>
+            </el-form-item>
+            <el-form-item label="状态" prop="state">
+              <el-select v-model="userForm.state" placeholder="请选择状态" style="width:100%;">
+                <el-option label="会员" :value="1"></el-option>
+                <el-option label="游客" :value="0"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="创建时间">
+              <el-input :value="userForm.createTime" disabled></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="submitUpdate" :loading="loading">确认修改</el-button>
+                <el-button @click="goBack">返回列表</el-button>
             </el-form-item>
           </el-form>
-          <el-button :type="btnType" @click="changeBtn" class="changebtn" :disabled="disabled" style="font-size: 18px;">
-             确认修改
-          </el-button>
+          <div v-else v-loading="loading">正在加载用户信息...</div>
         </div>
-      </div>
-    </el-col>
-    <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
-      <span>信息修改成功。</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogVisible = false">确定</el-button>
-      </span>
-    </el-dialog>
-  </el-row>
-
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        change: {
-          id: '',
-          createTime: '',
-          userName: '',
-          password: '',
-          email: '',
-          phone: '',
-          sex: '',
-          jifen: '',
-          state: '',
-        },
-        genderRaw: "",
-        iconstyle: 'iconfont icon-r-yes',
-        disabled: false,
-        btnType: 'success',
-        isRealchange: false,
-        dialogVisible: false,
-      }
-    },
-    components: {},
-    methods: {
-      mounted() {
-        const query = this.$route.query;
-        if (query.id) this.change.id = query.id;
-        if (query.sex)this.change.sex = query.sex;
-        if (query.email) this.change.email = query.email;
-        if (query.phone) this.change.phone = query.phone;
-        if (query.userName) this.change.userName = query.userName;
-        if(query.state) this.change.state = query.state;
-      },
-      changeBtn() {
-        this.req({
-          url: "/user",
-          method: "put",
-          data: this.change
-        }).then(res => {
-          console.log(res);
-          this.dialogVisible = true;
-        });
-      },
-
-      // queryBtn() {
-      //   this.req({
-      //     url: "/getUserById",
-      //     method: "post",
-      //     params: {
-      //       userId: this.change.id
-      //     }
-      //   }).then(res => {
-      //     const userData = res.data;
-      //     console.log(userData);
-      //     this.change.createTime = userData.createTime;
-      //     this.change.userName = userData.userName;
-      //     this.change.password = userData.password;
-      //     this.change.email = userData.email;
-      //     this.change.phone = userData.phone;
-      //     this.change.jifen = userData.jifen;
-      //     this.change.state = userData.state;
-      //     this.change.sex = userData.sex;
-      //   });
-      // }
-    },
-    computed: {
-      showgender() {
-        if (this.genderRaw == 0)
-          return "女";
-        else
-          return "男";
+export default {
+  name: 'ChangeUser',
+  data() {
+    return {
+      loading: false,
+      userForm: {}, // 初始化为空对象，通过查询填充
+      rules: {
+        user_name: [{ required: true, message: '用户名不能为空', trigger: 'blur' }],
+        // 可根据需要添加其他验证规则
       }
     }
+  },
+  methods: {
+    // 1.3 (前半部分) 根据 ID 查询用户信息
+    getUserDetail(id) {
+      this.loading = true;
+      // 注意：你的 API 文档没有提供“根据ID查询单个用户”的接口
+      // 这里我们假设它是一个标准的 GET /users/{id} 接口
+      this.req({
+        url: `/users/${id}`,
+        method: 'get'
+      }).then(data => {
+        // 将后端返回的 userName 映射到表单需要的 user_name
+        this.userForm = {
+          ...data,
+          user_name: data.userName 
+        };
+        this.loading = false;
+      }).catch(() => { this.loading = false; });
+    },
+    // 1.3 (后半部分) 提交修改
+    submitUpdate() {
+      this.$refs.userFormRef.validate(valid => {
+        if (valid) {
+          this.loading = true;
+          this.req({
+            url: '/users',
+            method: 'put',
+            data: this.userForm // 表单数据对象的字段名已和 API 一致
+          }).then(() => {
+            this.$message.success('修改成功！');
+            this.loading = false;
+            this.goBack(); // 修改成功后返回列表页
+          }).catch(() => { this.loading = false; });
+        }
+      });
+    },
+    goBack() {
+      this.$router.push('/user/query-user');
+    }
+  },
+  created() {
+    const userId = this.$route.query.id;
+    if (userId) {
+      this.getUserDetail(userId);
+    } else {
+      this.$message.error('未提供用户ID');
+      this.goBack();
+    }
   }
+}
 </script>
 
-<style>
-  .change-form {
-    margin: 2rem;
-  }
+<style scoped>
+.app-container { padding: 20px; }
+.content-card { background-color: rgba(50, 50, 50, 0.4); backdrop-filter: blur(4px); border-radius: 8px; padding: 20px; color: #fff; box-shadow: 0 0 8px rgba(0, 0, 0, 0.1); }
+.card-header { font-size: 18px; font-weight: bold; padding-bottom: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.2); margin-bottom: 20px; }
+.change-form { margin-top: 20px; }
 </style>
