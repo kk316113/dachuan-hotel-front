@@ -21,58 +21,9 @@
   </div>
 </template>
 
-<!-- <script>
-export default {
-  data() {
-    return {
-      tableData: [],
-      loading: false,
-    };
-  },
-  methods: {
-    // 【真实 API 版】
-    listProcessedOrders() {
-      this.loading = true;
-      this.req({
-        url: "/orders/complete", // 严格遵循 API 文档的路径
-        method: "get",
-        // 此接口无需参数
-      }).then((res) => {
-        // 真实 API 返回的是 { code, data } 对象，我们需要的是 res.data
-        this.tableData = res.data;
-        this.loading = false;
-      }).catch(err => {
-        this.loading = false;
-        console.error("获取已处理订单失败:", err);
-      });
-    },
-    // 辅助方法，用于在表格中显示状态文字
-    getFlagText(flag) {
-        switch (flag) {
-            case 1: return "已入住";
-            case 2: return "已退订";
-            case 3: return "已完成";
-            default: return "未知状态";
-        }
-    },
-    // 辅助方法，用于返回不同状态的标签颜色
-    getTagType(flag) {
-        switch (flag) {
-            case 1: return "success";
-            case 2: return "warning";
-            case 3: return "info";
-            default: return "primary";
-        }
-    }
-  },
-  created() {
-    this.listProcessedOrders();
-  },
-};
-</script> -->
-//test
 <script>
 export default {
+  name: 'HistoryOrder',
   data() {
     return {
       tableData: [],
@@ -80,17 +31,15 @@ export default {
     };
   },
   methods: {
-    // 【Mock 适配版】
+    // 获取已处理订单
     listProcessedOrders() {
       this.loading = true;
       this.req({
-        url: "/orders",
+        url: "/orders/complete", // 遵循 API 文档
         method: "get",
-        // 使用 json-server 的 _ne (not equal) 功能来筛选
-        params: { flag_ne: 0 },
       }).then((res) => {
-        // json-server 直接返回数组，所以 res 就是我们需要的数据
-        this.tableData = res; 
+        // 因为拦截器已处理，res 在这里就是最终的数据数组
+        this.tableData = res;
         this.loading = false;
       }).catch(err => {
         this.loading = false;
@@ -121,6 +70,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .user-table {
   margin: 2rem;

@@ -21,8 +21,8 @@
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="最大容纳人数" prop="maxPeople">
-                  <el-input-number v-model="addForm.maxPeople" :min="1" style="width: 100%;"></el-input-number>
+                <el-form-item label="最大容纳人数" prop="max_people">
+                  <el-input-number v-model="addForm.max_people" :min="1" style="width: 100%;"></el-input-number>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -62,6 +62,7 @@
         </div>
       </el-col>
     </el-row>
+
     <el-dialog title="提示" :visible.sync="dialogVisible" width="30%" center>
       <span>新房间信息添加成功！</span>
       <span slot="footer" class="dialog-footer">
@@ -73,12 +74,14 @@
 
 <script>
 export default {
+  name: 'RoomAdd',
   data() {
+    // 默认的表单数据，字段名严格遵循 API 文档的参数表
     const initialForm = {
       number: '',
       type: null,
       state: 0,
-      maxPeople: 1,
+      max_people: 1,
       introduce: "",
     };
     return {
@@ -87,12 +90,9 @@ export default {
       loading: false,
       dialogVisible: false,
       rules: {
-        number: [
-          { required: true, message: '请提供房间号', trigger: 'blur' },
-          { type: 'number', message: '房间号必须为数字值'}
-        ],
-        type: [{ required: true, message: '请选择房间类型', trigger: 'change' }],
-        maxPeople: [{ required: true, message: '请填写最大容纳人数', trigger: 'blur' }],
+        number: [ { required: true, message: '请提供房间号', trigger: 'blur' } ],
+        type: [ { required: true, message: '请选择房间类型', trigger: 'change' } ],
+        max_people: [ { required: true, message: '请填写最大容纳人数', trigger: 'blur' } ],
       }
     };
   },
@@ -101,29 +101,17 @@ export default {
       this.$refs.addFormRef.validate((valid) => {
         if (valid) {
           this.loading = true;
-          const payload = {
-            number: this.addForm.number,
-            typeId: this.addForm.type,
-            state: this.addForm.state,
-            max_people: this.addForm.maxPeople,
-            introduce: this.addForm.introduce
-          };
-          
           this.req({
             url: "/rooms",
             method: "post",
-            data: payload
-          }).then((res) => {
+            data: this.addForm // 表单数据对象的字段名已和 API 一致
+          }).then(() => {
             this.loading = false;
             this.dialogVisible = true;
             this.resetForm();
-          }).catch(err => {
+          }).catch(() => {
             this.loading = false;
-            console.log("请求失败了: ", err);
           });
-        } else {
-          this.$message.error('请检查表单必填项！');
-          return false;
         }
       });
     },
@@ -136,18 +124,8 @@ export default {
 </script>
 
 <style scoped>
-.app-container {
-  padding: 20px;
-}
-.card-header {
-  font-size: 18px;
-  font-weight: bold;
-  color: #fff;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  margin-bottom: 20px;
-}
-.add-form {
-  margin-top: 20px;
-}
+.app-container { padding: 20px; }
+.content-card { background-color: rgba(50, 50, 50, 0.4); backdrop-filter: blur(4px); border-radius: 8px; padding: 20px; color: #fff; box-shadow: 0 0 8px rgba(0, 0, 0, 0.1); }
+.card-header { font-size: 18px; font-weight: bold; padding-bottom: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.2); margin-bottom: 20px; }
+.add-form { margin-top: 20px; }
 </style>

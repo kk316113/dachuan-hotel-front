@@ -1,31 +1,38 @@
 <template>
   <div class="app-container">
-    <el-table
-      v-loading="loading"
-      :data="tableData"
-      border
-      stripe
-      fit
-      highlight-current-row
-      style="width: 75%; margin: 0 auto;"
-    >
-      <el-table-column prop="id" label="ID" align="center" width="80" />
-      <el-table-column prop="number" label="房间号" align="center" width="120" />
-      <el-table-column prop="type.typeName" label="房间类型" align="center" width="150" />
-      <el-table-column prop="state" label="状态" align="center" width="100">
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.state === 0 ? 'success' : 'info'">
-             {{ scope.row.state === 0 ? '空闲' : '已入住' }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="introduce" label="介绍" min-width="300" header-align="center" />
-    </el-table>
+    <div class="content-card">
+      <el-table
+        v-loading="loading"
+        :data="tableData"
+        border
+        stripe
+        fit
+        highlight-current-row
+        style="width: 100%;"
+      >
+        <el-table-column prop="id" label="ID" align="center" width="80" />
+        <el-table-column prop="number" label="房间号" align="center" />
+        <el-table-column prop="type.typeName" label="房间类型" align="center" />
+        <el-table-column label="价格" align="center">
+          <template slot-scope="{row}">¥{{ row.type.price }}</template>
+        </el-table-column>
+        <el-table-column label="状态" align="center">
+          <template slot-scope="{row}">
+            <el-tag :type="row.state === 0 ? 'success' : 'info'">
+              {{ row.state === 0 ? '空闲' : '已入住' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="maxPeople" label="可住人数" align="center" />
+        <el-table-column prop="introduce" label="介绍" show-overflow-tooltip></el-table-column>
+      </el-table>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
+  name: 'RoomList',
   data() {
     return {
       tableData: [],
@@ -38,16 +45,11 @@ export default {
       this.req({
         url: "/rooms",
         method: "get",
-      })
-        .then((res) => {
-          // --- 唯一的、最关键的修改在这里 ---
-          // 从返回的对象 res 中，取出 data 属性（即房间数组）
-          this.tableData = res.data;
-          
+      }).then((data) => {
+          // 智能拦截器已处理，data 就是最终的房间数组
+          this.tableData = data;
           this.loading = false;
-        })
-        .catch((err) => {
-          console.error("获取房间列表失败:", err);
+        }).catch(() => {
           this.loading = false;
         });
     },
@@ -59,7 +61,5 @@ export default {
 </script>
 
 <style scoped>
-.app-container {
-  padding: 20px;
-}
+.app-container { padding: 20px; }
 </style>
