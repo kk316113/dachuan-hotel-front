@@ -182,7 +182,7 @@ export const constantRoutes = [
       name: '/reportlist',
       component: () => import('@/views/report/reportlist'),
       meta: {
-        title: '报表统计',
+        title: '收入月报',
         icon: 'iconfont icon-wenzhang'
       }
     },{

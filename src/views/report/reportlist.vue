@@ -1,7 +1,7 @@
 <template>
   <div class="report-container">
-    <el-card>
-      <div slot="header">
+    <el-card  class="transparent-card">
+      <div slot="header" class="report-title">
         <span>月度营业额报表</span>
       </div>
       <div>
@@ -54,5 +54,14 @@ export default {
 <style scoped>
 .report-container {
   padding: 24px;
+}
+.transparent-card {
+  background: transparent !important;
+  box-shadow: none;
+  border: none !important;
+}
+.report-title {
+  font-size: 22px;
+  font-weight: bold;
 }
 </style>
