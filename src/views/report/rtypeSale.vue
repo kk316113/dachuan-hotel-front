@@ -1,7 +1,7 @@
 <template>
   <div class="rtype-sale-container">
-    <el-card>
-      <div slot="header">
+    <el-card class="transparent-card no-border-card">
+      <div slot="header" class="report-title">
         <span>房型销量统计</span>
       </div>
       <el-table :data="tableData" style="width: 100%;">
@@ -67,5 +67,16 @@ export default {
 <style scoped>
 .rtype-sale-container {
   padding: 24px;
+}
+.transparent-card {
+  background: transparent !important;
+  box-shadow: none;
+}
+.no-border-card {
+  border: none !important;
+}
+.report-title {
+  font-size: 22px;
+  font-weight: bold;
 }
 </style>
