@@ -6,6 +6,7 @@
           <div class="card-header">
             <span>修改用户信息</span>
           </div>
+          <!-- v-if="userForm.id" 确保在数据加载完成前不显示表单，避免闪烁 -->
           <el-form v-if="userForm.id" :model="userForm" :rules="rules" ref="userFormRef" label-width="100px" class="change-form">
             <el-form-item label="用户ID">
               <el-input :value="userForm.id" disabled></el-input>
@@ -32,6 +33,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="创建时间">
+              <!-- 假设后端返回的创建时间字段是 createTime -->
               <el-input :value="userForm.createTime" disabled></el-input>
             </el-form-item>
             <el-form-item>
@@ -39,7 +41,8 @@
                 <el-button @click="goBack">返回列表</el-button>
             </el-form-item>
           </el-form>
-          <div v-else v-loading="loading">正在加载用户信息...</div>
+          <!-- 数据加载时显示loading状态 -->
+          <div v-else v-loading="loading" style="text-align: center; padding: 20px;">正在加载用户信息...</div>
         </div>
       </el-col>
     </el-row>
@@ -55,29 +58,56 @@ export default {
       userForm: {}, // 初始化为空对象，通过查询填充
       rules: {
         user_name: [{ required: true, message: '用户名不能为空', trigger: 'blur' }],
-        // 可根据需要添加其他验证规则
+        phone: [{ pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }],
+        email: [{ type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }]
       }
     }
   },
   methods: {
-    // 1.3 (前半部分) 根据 ID 查询用户信息
+    // 【核心改造】根据 ID 查询用户信息
     getUserDetail(id) {
       this.loading = true;
-      // 注意：你的 API 文档没有提供“根据ID查询单个用户”的接口
-      // 这里我们假设它是一个标准的 GET /users/{id} 接口
+      // 【最终方案】既然后端强制要求分页，我们就提供分页参数来请求列表
       this.req({
-        url: `/users/${id}`,
-        method: 'get'
-      }).then(data => {
-        // 将后端返回的 userName 映射到表单需要的 user_name
-        this.userForm = {
-          ...data,
-          user_name: data.userName 
-        };
+        url: `/users`, 
+        method: 'get',
+        params: {
+          page: 1,        // 请求第一页
+          pageSize: 100   // 请求一个足够大的数量，确保能包含目标用户
+        }
+      }).then(response => {
+        // 这里的 response 是后端返回的完整对象 { code, msg, data }
+        // data 属性就是那个 List<User>
+        if (response && response.code === 1 && Array.isArray(response.data)) {
+          // 在返回的列表中，用 find 方法找到 ID 匹配的用户
+          // 使用 == 进行比较，因为从 URL 获取的 id 可能是字符串，而 user.id 是数字
+          const user = response.data.find(u => u.id == id);
+          
+          if (user) {
+            // 如果找到了用户，填充表单
+            this.userForm = {
+              ...user,
+              // 后端返回的可能是 userName，也可能是 user_name，做兼容处理
+              user_name: user.userName || user.user_name 
+            };
+          } else {
+            this.$message.error(`在返回的用户列表中未找到ID为 ${id} 的用户`);
+            this.goBack();
+          }
+        } else {
+          this.$message.error(response.msg || '获取用户列表失败');
+          this.goBack();
+        }
+      }).catch((err) => {
+        this.$message.error('获取用户信息时出错');
+        console.error("获取用户详情失败:", err);
+        this.goBack();
+      }).finally(() => {
         this.loading = false;
-      }).catch(() => { this.loading = false; });
+      });
     },
-    // 1.3 (后半部分) 提交修改
+    
+    // 提交修改的方法是正确的，保持不变
     submitUpdate() {
       this.$refs.userFormRef.validate(valid => {
         if (valid) {
@@ -85,17 +115,27 @@ export default {
           this.req({
             url: '/users',
             method: 'put',
-            data: this.userForm // 表单数据对象的字段名已和 API 一致
-          }).then(() => {
-            this.$message.success('修改成功！');
+            data: this.userForm 
+          }).then((response) => {
+            if (response && response.code === 1) {
+              this.$message.success('修改成功！');
+              this.goBack(); 
+            } else {
+              this.$message.error(response.msg || '修改失败，请重试');
+            }
+          }).catch((err) => {
+            this.$message.error('请求服务器时发生错误');
+            console.error("提交修改失败:", err);
+          }).finally(() => {
             this.loading = false;
-            this.goBack(); // 修改成功后返回列表页
-          }).catch(() => { this.loading = false; });
+          });
         }
       });
     },
+
     goBack() {
-      this.$router.push('/user/query-user');
+      // 返回上一页是更好的用户体验
+      this.$router.go(-1);
     }
   },
   created() {
@@ -103,7 +143,7 @@ export default {
     if (userId) {
       this.getUserDetail(userId);
     } else {
-      this.$message.error('未提供用户ID');
+      this.$message.error('未在URL中找到用户ID');
       this.goBack();
     }
   }

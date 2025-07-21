@@ -17,7 +17,7 @@
             <el-row :gutter="20">
               <el-col :span="12">
                 <el-form-item label="房间号" prop="number">
-                  <el-input v-model.number="addForm.number" placeholder="例如：301"></el-input>
+                  <el-input v-model="addForm.number" placeholder="例如：301"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -52,6 +52,7 @@
                 type="textarea" 
                 v-model="addForm.introduce"
                 placeholder="请输入房间的简单介绍（可选）"
+                :rows="3"
               ></el-input>
             </el-form-item>
             <el-form-item>
@@ -63,7 +64,7 @@
       </el-col>
     </el-row>
 
-    <el-dialog title="提示" :visible.sync="dialogVisible" width="30%" center>
+    <el-dialog title="操作成功" :visible.sync="dialogVisible" width="30%" center>
       <span>新房间信息添加成功！</span>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
@@ -76,7 +77,6 @@
 export default {
   name: 'RoomAdd',
   data() {
-    // 默认的表单数据，字段名严格遵循 API 文档的参数表
     const initialForm = {
       number: '',
       type: null,
@@ -101,15 +101,24 @@ export default {
       this.$refs.addFormRef.validate((valid) => {
         if (valid) {
           this.loading = true;
+          // 【核心修正】直接发送 this.addForm，因为它的字段名 (number, type, max_people)
+          // 已经和后端 POST 请求所需的参数名完全一致。
           this.req({
             url: "/rooms",
             method: "post",
-            data: this.addForm // 表单数据对象的字段名已和 API 一致
-          }).then(() => {
-            this.loading = false;
-            this.dialogVisible = true;
-            this.resetForm();
-          }).catch(() => {
+            data: this.addForm
+          }).then((response) => {
+            if (response && response.code === 1) {
+              this.$message.success('添加成功！');
+              this.dialogVisible = true;
+              this.resetForm();
+            } else {
+              this.$message.error(response.msg || '添加失败，请稍后重试');
+            }
+          }).catch((err) => {
+            this.$message.error('请求服务器失败，请检查网络连接');
+            console.error("添加房间请求失败:", err);
+          }).finally(() => {
             this.loading = false;
           });
         }

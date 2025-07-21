@@ -78,15 +78,15 @@ export const constantRoutes = [
           icon: 'iconfont icon-user-list',
         }
       },
-      {
-          path: 'change-user',
-          name: 'change-user',
-          component: () => import('@/views/user/changeuser'),
-          meta: {
-            title: '修改用户',
-            icon: 'iconfont icon-xiugai',
-          }
-        },
+      // {
+      //     path: 'change-user',
+      //     name: 'change-user',
+      //     component: () => import('@/views/user/changeuser'),
+      //     meta: {
+      //       title: '修改用户',
+      //       icon: 'iconfont icon-xiugai',
+      //     }
+      //   },
     ]
   },
 
