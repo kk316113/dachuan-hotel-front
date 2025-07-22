@@ -101,22 +101,15 @@ export default {
       this.$refs.addFormRef.validate((valid) => {
         if (valid) {
           this.loading = true;
-          // 【核心修正】直接发送 this.addForm，因为它的字段名 (number, type, max_people)
-          // 已经和后端 POST 请求所需的参数名完全一致。
           this.req({
             url: "/rooms",
             method: "post",
             data: this.addForm
-          }).then((response) => {
-            if (response && response.code === 1) {
+          }).then(() => {
               this.$message.success('添加成功！');
               this.dialogVisible = true;
               this.resetForm();
-            } else {
-              this.$message.error(response.msg || '添加失败，请稍后重试');
-            }
           }).catch((err) => {
-            this.$message.error('请求服务器失败，请检查网络连接');
             console.error("添加房间请求失败:", err);
           }).finally(() => {
             this.loading = false;

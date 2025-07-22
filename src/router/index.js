@@ -78,15 +78,6 @@ export const constantRoutes = [
           icon: 'iconfont icon-user-list',
         }
       },
-      // {
-      //     path: 'change-user',
-      //     name: 'change-user',
-      //     component: () => import('@/views/user/changeuser'),
-      //     meta: {
-      //       title: '修改用户',
-      //       icon: 'iconfont icon-xiugai',
-      //     }
-      //   },
     ]
   },
 
@@ -165,16 +156,16 @@ export const constantRoutes = [
         icon: 'iconfont icon-r-list'
       },
     children: [{
-      path: '/reportlist',
-      name: '/reportlist',
+      path: 'report-list',
+      name: 'report-list',
       component: () => import('@/views/report/reportlist'),
       meta: {
         title: '收入月报',
         icon: 'iconfont icon-wenzhang'
       }
     },{
-      path: '/rtypeSale',
-      name: '/rtypeSale',
+      path: 'rtype-sale',
+      name: 'rtype-sale',
       component: () => import('@/views/report/rtypeSale'),
       meta: {
         title: '房型销量',

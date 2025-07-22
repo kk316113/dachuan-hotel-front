@@ -28,7 +28,12 @@
 
       <!-- 用户列表表格 -->
       <el-table v-loading="loading" :data="tableData" stripe style="width: 100%">
-        <el-table-column prop="id" label="ID" align="center" width="80"></el-table-column>
+        <!-- 【核心修正】将原来的ID列改为显示递增序号 -->
+        <el-table-column label="序号" align="center" width="80">
+          <template slot-scope="scope">
+            {{ (searchQuery.page - 1) * searchQuery.pageSize + scope.$index + 1 }}
+          </template>
+        </el-table-column>
         <el-table-column prop="userName" label="用户名" align="center"></el-table-column>
         <el-table-column label="性别" align="center">
           <template slot-scope="{row}">{{ row.sex === 1 ? '男' : '女' }}</template>
@@ -67,39 +72,37 @@
 
     <!-- 编辑用户信息的弹窗 -->
     <el-dialog title="编辑用户信息" :visible.sync="editDialogVisible" width="600px" @close="cancelEdit">
-  <el-form :model="editForm" :rules="editRules" ref="editFormRef" label-width="100px">
-    <el-form-item label="用户ID">
-      <el-input :value="editForm.id" disabled></el-input>
-    </el-form-item>
-    
-    <el-form-item label="用户名" prop="userName">
-      <el-input v-model="editForm.userName" placeholder="请输入用户名"></el-input>
-    </el-form-item>
-
-    <el-form-item label="性别" prop="sex">
-      <el-select v-model="editForm.sex" placeholder="请选择性别" style="width:100%;">
-        <el-option label="男" :value="1"></el-option>
-        <el-option label="女" :value="0"></el-option>
-      </el-select>
-    </el-form-item>
-    <el-form-item label="手机号码" prop="phone">
-      <el-input v-model="editForm.phone" placeholder="请输入手机号码"></el-input>
-    </el-form-item>
-    <el-form-item label="邮箱" prop="email">
-      <el-input v-model="editForm.email" placeholder="请输入邮箱"></el-input>
-    </el-form-item>
-    <el-form-item label="状态" prop="state">
-      <el-select v-model="editForm.state" placeholder="请选择状态" style="width:100%;">
-        <el-option label="会员" :value="1"></el-option>
-        <el-option label="游客" :value="0"></el-option>
-      </el-select>
-    </el-form-item>
-  </el-form>
-  <span slot="footer" class="dialog-footer">
-    <el-button @click="cancelEdit">取 消</el-button>
-    <el-button type="primary" @click="submitUpdate" :loading="submitLoading">确 定</el-button>
-  </span>
-</el-dialog>
+      <el-form :model="editForm" :rules="editRules" ref="editFormRef" label-width="100px">
+        <el-form-item label="用户ID">
+          <el-input :value="editForm.id" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="用户名" prop="userName">
+          <el-input v-model="editForm.userName" placeholder="请输入用户名"></el-input>
+        </el-form-item>
+        <el-form-item label="性别" prop="sex">
+          <el-select v-model="editForm.sex" placeholder="请选择性别" style="width:100%;">
+            <el-option label="男" :value="1"></el-option>
+            <el-option label="女" :value="0"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="手机号码" prop="phone">
+          <el-input v-model="editForm.phone" placeholder="请输入手机号码"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="editForm.email" placeholder="请输入邮箱"></el-input>
+        </el-form-item>
+        <el-form-item label="状态" prop="state">
+          <el-select v-model="editForm.state" placeholder="请选择状态" style="width:100%;">
+            <el-option label="会员" :value="1"></el-option>
+            <el-option label="游客" :value="0"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancelEdit">取 消</el-button>
+        <el-button type="primary" @click="submitUpdate" :loading="submitLoading">确 定</el-button>
+      </span>
+    </el-dialog>
 
   </div>
 </template>
@@ -109,7 +112,6 @@ export default {
   name: 'QueryUser',
   data() {
     return {
-      // 表格和查询相关数据
       tableData: [],
       loading: false,
       totalItems: 0,
@@ -121,12 +123,9 @@ export default {
         page: 1,
         pageSize: 10
       },
-      // 编辑弹窗相关数据
       editDialogVisible: false,
       submitLoading: false,
-      editForm: {}, // 存放待编辑用户的信息
-      
-      // 【修正2】校验规则现在指向驼峰命名的 userName
+      editForm: {},
       editRules: {
         userName: [{ required: true, message: '用户名不能为空', trigger: 'blur' }],
         phone: [{ pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }],
@@ -135,7 +134,7 @@ export default {
     };
   },
   methods: {
-    // 显示用户（分页查询）
+    // 【核心修正】显示用户（分页查询）
     listUser() {
       this.loading = true;
       this.req({
@@ -143,10 +142,21 @@ export default {
         method: "get",
         params: this.searchQuery
       }).then((data) => {
-        // 后端GET返回的数据已经是驼峰命名，可以直接使用
-        this.tableData = data || [];
-        // 此处分页总数依然建议由后端直接提供total字段，否则分页器显示不准确
-        this.totalItems = data ? data.length : 0; 
+        // 假设 this.req 成功时直接返回 data 数组
+        const resultData = data || [];
+        this.tableData = resultData;
+
+        // 【前端分页技巧】
+        // 如果返回的数据量等于请求的每页数量，我们就假设还有下一页
+        if (resultData.length === this.searchQuery.pageSize) {
+          // “欺骗”分页组件，告诉它总数比当前已加载的至少多1，这样“下一页”按钮就可以点了
+          this.totalItems = this.searchQuery.page * this.searchQuery.pageSize + 1;
+        } else {
+          // 如果返回的数据量小于每页数量，说明这是最后一页
+          // 我们可以计算出真实的总数
+          this.totalItems = (this.searchQuery.page - 1) * this.searchQuery.pageSize + resultData.length;
+        }
+        
       }).catch(() => {
         this.tableData = [];
         this.totalItems = 0;
@@ -154,7 +164,6 @@ export default {
         this.loading = false;
       });
     },
-    // 格式化时间戳的辅助函数
     formatDateTime(timestamp) {
       if (!timestamp) return 'N/A';
       const date = new Date(timestamp);
@@ -181,21 +190,14 @@ export default {
       this.searchQuery.page = val;
       this.listUser();
     },
-
-    // 【修正3】处理编辑按钮点击事件
     handleEdit(row) {
-      // 后端GET返回的row对象已经是驼峰命名(userName)，直接浅拷贝赋值给editForm即可
-      // 不再需要手动映射字段
-      this.editForm = Object.assign({}, row);
+      this.editForm = { ...row };
       this.editDialogVisible = true;
     },
-    
-    // 提交修改
     submitUpdate() {
       this.$refs.editFormRef.validate(valid => {
         if (valid) {
           this.submitLoading = true;
-          // 直接发送editForm，因为它的字段名(userName)现在已经符合后端PUT API的要求
           this.req({
             url: '/users',
             method: 'put',
@@ -204,24 +206,21 @@ export default {
             this.$message.success('修改成功！');
             this.cancelEdit();
             this.listUser();
-          }).catch((err) => {
-            const errorMsg = (err && err.msg) ? err.msg : '修改失败，请重试';
-            this.$message.error(errorMsg);
+          }).catch(() => {
+            // 拦截器已处理错误提示
           }).finally(() => {
             this.submitLoading = false;
           });
         }
       });
     },
-    // 取消编辑
     cancelEdit() {
       this.editDialogVisible = false;
       if (this.$refs.editFormRef) {
+        this.editForm = {}; // 清空表单
         this.$refs.editFormRef.clearValidate();
       }
-      this.editForm = {};
     },
-    // 删除用户
     handleDelete(id) {
       this.$confirm("确定删除该用户吗？此操作不可逆。", "警告", { type: "warning" })
         .then(() => {
@@ -232,12 +231,9 @@ export default {
           }).then(() => {
             this.$message.success("删除成功");
             this.listUser();
-          }).catch((err) => {
-            const errorMsg = (err && err.msg) ? err.msg : '删除失败';
-            this.$message.error(errorMsg);
           });
-        }).catch(() => {
-          this.$message.info("已取消删除");
+        }).catch(() => { 
+          this.$message.info("已取消删除"); 
         });
     },
   },
