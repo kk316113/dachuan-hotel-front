@@ -1,7 +1,9 @@
 <template>
     <div class="login-container">
-        <!-- 左上角logo -->
-        <img src="@/assets/logo.png" alt="logo" class="login-logo" />
+        <!-- 左上角logo设置小一点 -->
+         <div class="logo-container">
+        <img src="@/assets/logo.png" alt="logo" class="logo" />
+    </div>
         <div class="login-box-wrapper">
             <el-card class="box-card">
                 <div class="text item">
@@ -347,7 +349,16 @@ $light_gray: #eee;
     box-shadow: none !important;
     -webkit-text-fill-color: #ffffff !important;
 }
-
+.login-container .logo-container {
+    position: absolute;
+    top: 32px;
+    left: 32px;
+    height: 200px;
+    z-index: 100;
+    img {
+        width: 350px;
+    }
+}
 #app {
     overflow: hidden !important;
 }
