@@ -7,18 +7,16 @@
       <el-row :gutter="30">
         <el-col :span="14">
           <div ref="chart" style="width: 100%; height: 600px;"></div>
-
         </el-col>
         <el-col :span="10">
           <div class="table-title">月度数据详情</div>
           <el-table :data="tableData" style="width: 100%;" height="540px" empty-text="暂无数据">
             <el-table-column prop="month" label="月份" width="100"></el-table-column>
-            <el-table-column prop="revenue" label="营业额 (千元)" align="right">
+            <el-table-column prop="revenue" label="营业额 (元)" align="right">
               <template slot-scope="scope">
-                {{ (scope.row.revenue / 1000).toFixed(1) }}
+                {{ scope.row.revenue.toLocaleString() }}
               </template>
             </el-table-column>
-
           </el-table>
         </el-col>
       </el-row>
@@ -111,7 +109,7 @@ export default {
           trigger: 'axis',
           formatter: function (params) {
             const p = params[0];
-            return `${p.axisValue}<br/>营业额: ${(p.data / 1000).toFixed(1)} 千元`;
+            return `${p.axisValue}<br/>营业额: ${p.data.toLocaleString()} 元`;
           },
           backgroundColor: 'rgba(50,50,50,0.7)',
           borderColor: '#333',
@@ -137,13 +135,11 @@ export default {
         },
         yAxis: {
           type: 'value',
+          max: 1000,
           min: 0,
-          max: 50000,
-          interval: 5000,
+          interval: 100,
           axisLabel: {
-            formatter: function (value) {
-              return value / 1000 + 'k';
-            }
+            formatter: '{value} 元'
           },
           axisLine: {
             lineStyle: {
@@ -176,7 +172,6 @@ export default {
       this.chartInstance.setOption(option);
     },
 
-
     // 响应式调整图表大小
     handleResize() {
       if (this.chartInstance) {
@@ -203,8 +198,6 @@ export default {
 .report-container {
   padding: 24px;
 }
-
-/* 【样式修改】卡片使用深色磨砂背景 */
 .transparent-card {
   background-color: rgba(40, 43, 51, 0.85);
   backdrop-filter: blur(5px);
@@ -212,8 +205,6 @@ export default {
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   border-radius: 8px;
 }
-
-/* 【样式修改】标题字体改为白色 */
 .report-title,
 .table-title {
   font-size: 20px;
@@ -221,45 +212,35 @@ export default {
   color: #ffffff;
   margin-bottom: 10px;
 }
-
 .table-title {
   font-size: 16px;
   padding-bottom: 10px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
-
-/* 【样式修改】使用深度选择器修改 Element UI 表格样式以适配深色主题 */
 .transparent-card>>>.el-table {
   background-color: transparent;
   color: #eee;
 }
-
 .transparent-card>>>.el-table th,
 .transparent-card>>>.el-table tr {
   background-color: transparent;
 }
-
 .transparent-card>>>.el-table td,
 .transparent-card>>>.el-table th.is-leaf {
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
-
 .transparent-card>>>.el-table th {
   color: #fff;
 }
-
 .transparent-card>>>.el-table::before {
   height: 0px;
 }
-
 .transparent-card>>>.el-table--enable-row-hover .el-table__body tr:hover>td {
   background-color: rgba(255, 255, 255, 0.05);
 }
-
 .transparent-card>>>.el-card__header {
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
-
 .transparent-card>>>.el-loading-mask {
   background-color: rgba(40, 43, 51, 0.5);
 }

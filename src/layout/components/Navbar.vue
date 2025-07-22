@@ -5,33 +5,37 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <el-avatar shape="square" :size="35" :src="require('@/assets/avatar.jpg')" style="vertical-align: middle; margin-right: 5px;"></el-avatar>
+          <!-- 【核心修正】将 el.avatar 修改为 el-avatar -->
+          <el-avatar shape="square" :size="35" :src="admin.image" style="vertical-align: middle; margin-right: 5px;"></el-avatar>
           <span class="el-dropdown-link">
-            欢迎您, {{ adminName }}<i class="el-icon-arrow-down el-icon--right"></i>
+            欢迎您, {{ admin.name }}<i class="el-icon-arrow-down el-icon--right"></i>
           </span>
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
-          <el-dropdown-item @click.native="openUpdateDialog">修改信息</el-dropdown-item>
-          <el-dropdown-item  @click.native="logout">
+          <el-dropdown-item @click.native="openAvatarDialog">修改头像</el-dropdown-item>
+          <el-dropdown-item @click.native="logout">
             <span style="display:block;">退出登录</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
 
-    <el-dialog title="修改信息" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
-      <el-input placeholder="用户名" v-model="admin.adminName">
-        <template slot="prepend">登录账号</template>
-      </el-input>
-      <el-input placeholder="若需要修改密码，请输入" v-model="admin.password" show-password>
-        <template slot="prepend">输入密码</template>
-      </el-input>
-      <el-input placeholder="确认密码" v-model="admin.confirmPassword" show-password>
-        <template slot="prepend">确认密码</template>
-      </el-input>
+    <el-dialog title="修改头像" :visible.sync="avatarDialogVisible" width="400px" :append-to-body="true">
+      <el-upload
+        class="avatar-uploader"
+        action="#"
+        :show-file-list="false"
+        :on-change="handleAvatarChange"
+        :auto-upload="false"
+        accept="image/jpeg,image/png,image/gif"
+      >
+        <img v-if="newAvatarUrl" :src="newAvatarUrl" class="avatar">
+        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+      </el-upload>
+      <div class="upload-tip">请选择图片，推荐大小200x200，格式为JPG/PNG/GIF</div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false"> 取 消</el-button>
-        <el-button type="primary" @click="updateAdmin"> 确 定</el-button>
+        <el-button @click="avatarDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitAvatar" :loading="uploading">确 定 上 传</el-button>
       </span>
     </el-dialog>
   </div>
@@ -50,95 +54,123 @@ export default {
   },
   data() {
     return {
-      dialogVisible: false,
       admin: {
-        adminName: '',
-        password: '',
-        confirmPassword: ''
-      }
+        id: null,
+        name: '管理员',
+        image: require('@/assets/avatar.jpg') // 默认头像
+      },
+      avatarDialogVisible: false,
+      uploading: false,
+      newAvatarFile: null,
+      newAvatarUrl: ''
     }
   },
   computed: {
     ...mapGetters(["sidebar"]),
-    // 使用计算属性来安全地获取用户信息
-    userInfo() {
-      try {
-        return JSON.parse(localStorage.getItem('userInfo')) || {};
-      } catch (e) {
-        return {};
-      }
-    },
-    adminName() {
-      // 从安全的 userInfo 中获取名字用于显示
-      return this.userInfo.adminName || '管理员';
-    }
   },
   methods: {
     toggleSideBar() {
       this.$store.dispatch("app/toggleSideBar");
     },
     
-    // 退出登录方法
-    logout() {
-      this.$confirm('确定要退出登录吗？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('userInfo');
-        localStorage.removeItem('hasLogin');
-        this.$router.push('/login');
-      }).catch(() => {
-        // 用户点击取消，不做任何事
-      });
-    },
-
-    // 打开对话框时，填充当前用户信息
-    openUpdateDialog() {
-        this.admin = {
-            adminName: this.adminName,
-            password: '',
-            confirmPassword: ''
-        };
-        this.dialogVisible = true;
-    },
-
-    // 修改管理员信息方法
-    updateAdmin() {
-      if (this.admin.adminName.trim() === "") {
-        this.$message.error("用户名不能为空");
-        return;
+    // 获取管理员信息的方法
+    async getAdminInfo() {
+      const adminId = localStorage.getItem('id');
+      if (!adminId) {
+        // 如果本地没有ID，则抛出错误
+        throw new Error("在 localStorage 中未找到 'id'");
       }
-      if (this.admin.password && (this.admin.password !== this.admin.confirmPassword)) {
-        this.$message.error("两次输入密码不一致");
-        return;
-      }
-      
-      const payload = {
-        id: this.userInfo.id,
-        adminName: this.admin.adminName,
-        password: this.admin.password,
-      };
+      this.admin.id = adminId;
 
-      // 假设你的更新接口路径是 /admin/updateAdmin
-      this.req({
-        url: "/admin/updateAdmin",
-        method: "put",
-        data: payload
-      }).then(() => {
-        this.dialogVisible = false;
-        this.$alert('信息修改成功！请重新登录。', '操作成功', {
-          confirmButtonText: '确定',
-          callback: () => {
-            this.logout();
-          }
+      // 使用 try...catch 包装异步请求
+      try {
+        const data = await this.req({
+          url: '/admins',
+          method: 'get',
+          params: { id: this.admin.id }
         });
-      });
+        if (data) {
+          this.admin.name = data.adminName || '管理员';
+          if (data.image) {
+            this.admin.image = data.image;
+          }
+        }
+      } catch (err) {
+        console.error("Navbar: GET /admins 请求失败:", err);
+        // 将错误继续向上抛出，让调用者知道请求失败了
+        throw err;
+      }
     },
-    handleClose() {
-        this.dialogVisible = false;
+
+    logout() {
+      this.$confirm('确定要退出登录吗？', '提示', { type: 'warning' })
+        .then(() => {
+          localStorage.removeItem('token');
+          localStorage.removeItem('userInfo');
+          localStorage.removeItem('hasLogin');
+          localStorage.removeItem('id');
+          this.$router.push('/login');
+        }).catch(() => {});
+    },
+
+    // 【核心修正】打开修改头像弹窗时，先获取信息
+    async openAvatarDialog() {
+      try {
+        // 等待获取信息成功
+        await this.getAdminInfo();
+        
+        // 成功后，准备并打开弹窗
+        this.newAvatarFile = null;
+        this.newAvatarUrl = '';
+        this.avatarDialogVisible = true;
+      } catch (err) {
+        // 如果 getAdminInfo 失败 (例如没有ID或网络错误)，在这里捕获并提示用户
+        this.$message.error("获取管理员信息失败，请重新登录后再试。");
+      }
+    },
+
+    handleAvatarChange(file) {
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!');
+        return;
+      }
+      this.newAvatarFile = file.raw;
+      this.newAvatarUrl = URL.createObjectURL(file.raw);
+    },
+
+    submitAvatar() {
+      if (!this.newAvatarFile) {
+        this.$message.warning("请先选择一张图片");
+        return;
+      }
+      // 此时 this.admin.id 已经是最新获取的
+      if (!this.admin.id) {
+        this.$message.error("无法获取管理员ID，请重新登录后再试！");
+        return;
+      }
+      this.uploading = true;
+      const formData = new FormData();
+      formData.append('image', this.newAvatarFile);
+      formData.append('id', this.admin.id);
+
+      this.req({
+        url: '/upload',
+        method: 'post',
+        data: formData
+      }).then(newUrl => {
+        this.$message.success("头像上传成功！");
+        this.admin.image = newUrl;
+        this.avatarDialogVisible = false;
+      }).catch(err => {
+        console.error("头像上传失败:", err);
+      }).finally(() => {
+        this.uploading = false;
+      });
     }
+  },
+  created() {
+    // 【核心修正】组件创建时不再自动请求管理员信息
   }
 };
 </script>
@@ -201,21 +233,54 @@ export default {
       font-weight: normal;
       transition: color 0.3s;
     }
-    // 鼠标悬浮时高亮
     .el-breadcrumb__inner a:hover,
     .el-breadcrumb__inner.is-link:hover {
       color: #ffffff;
     }
-    
-    // 当前页面（非链接）的文字颜色
     .el-breadcrumb__inner:not(.is-link) {
       color: #ffffff;
       font-weight: bold;
     }
-    
     .el-breadcrumb__separator {
       color: #a0a0a0;
     }
   }
+}
+
+/* 上传组件样式 */
+.avatar-uploader {
+  text-align: center;
+  margin-bottom: 10px;
+}
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409EFF;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+  border-radius: 6px;
+}
+.upload-tip {
+  text-align: center;
+  color: #8c939d;
+  font-size: 12px;
 }
 </style>

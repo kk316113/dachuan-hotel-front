@@ -1,25 +1,39 @@
 <template>
   <div class="rtype-sale-container">
-    <el-card class="transparent-card no-border-card">
+    <el-card class="transparent-card no-border-card" v-loading="loading">
       <div slot="header" class="report-title">
         <span>近十二个月房型销量排名</span>
       </div>
 
+      <!-- 【样式修改】调整栅格布局比例 -->
       <el-row :gutter="30">
-        <el-col :span="12">
+        <!-- 左侧：标准饼图 -->
+        <el-col :span="10">
+          <div class="chart-title">销量占比</div>
           <div ref="pieChart" style="width: 100%; height: 400px;">
-            <div v-if="!validData.length" class="no-data-pie">
-              暂无销售数据
+            <div v-if="!validData.length" class="no-data-placeholder">
+              暂无有效销售数据
             </div>
           </div>
         </el-col>
 
-        <el-col :span="12">
-          <div ref="roseChart" style="width: 100%; height: 400px;">
-            <div v-if="!validData.length" class="no-data-pie">
-              暂无销售数据
-            </div>
-          </div>
+        <!-- 右侧：销量排行榜表格 -->
+        <el-col :span="14">
+          <div class="chart-title">销量排行榜</div>
+          <!-- 【样式修改】移除固定宽度，设置高度与图表一致 -->
+          <el-table :data="tableData" style="width: 100%;" height="400px" empty-text="暂无数据">
+            <el-table-column label="排名" width="80" align="center">
+              <template slot-scope="scope">
+                <span class="rank-badge" :class="'rank-' + (scope.$index + 1)">{{ scope.$index + 1 }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="roomType" label="房型"></el-table-column>
+            <el-table-column prop="saleCount" label="销量" align="right" width="120">
+                <template slot-scope="scope">
+                    {{ scope.row.saleCount.toLocaleString() }}
+                </template>
+            </el-table-column>
+          </el-table>
         </el-col>
       </el-row>
     </el-card>
@@ -27,7 +41,7 @@
 </template>
 
 <script>
-import * as echarts from 'echarts'; // 推荐使用这种方式引入
+import * as echarts from 'echarts';
 
 export default {
   name: 'RtypeSale',
@@ -35,30 +49,26 @@ export default {
     return {
       tableData: [],
       pieChartInstance: null,
-      roseChartInstance: null,
-      colors: ['#409EFF', '#67C23A', '#E6A23C', '#F56C6C', '#909399', '#1abc9c'],
+      colors: ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272'],
       loading: false
     };
   },
   computed: {
-    // 过滤出销售数量大于0的有效数据
     validData() {
       return this.tableData.filter(item => item.saleCount > 0);
     }
   },
   watch: {
-    // 监听有效数据变化，当数据更新时自动重新绘制图表
     validData: {
-      deep: true, // 深度监听数组内部对象的变化
-      handler(newVal) {
-        if (newVal.length > 0) {
-          this.$nextTick(() => {
+      deep: true,
+      handler(newData) {
+        this.$nextTick(() => {
+          if (newData.length > 0) {
             this.drawPieChart();
-            this.drawRoseChart();
-          });
-        } else {
-          this.clearCharts(); // 数据为空时清空图表
-        }
+          } else {
+            this.clearCharts();
+          }
+        });
       }
     }
   },
@@ -68,194 +78,91 @@ export default {
       this.req({
         url: "/report/rTypeSale",
         method: "get"
-      })
-        .then((res) => {
-          const { roomTypeList, saleList } = res.data.data;
+      }).then((data) => {
+        if (data && data.roomTypeList && data.saleList) {
+          const { roomTypeList, saleList } = data;
           const roomTypeMap = {
-            1: '单人房',
-            2: '双人床',
-            3: '三人床',
-            4: '大床房',
-            5: '豪华套房'
+            1: '单人房', 2: '双人房', 3: '三人房', 4: '大床房', 5: '豪华套房'
           };
-          
-          // 将后端数据映射并排序
-          const tableData = roomTypeList.map((type, idx) => ({
-            roomType: roomTypeMap[type] || `类型${type}`,
+          if (roomTypeList.length !== saleList.length) {
+              this.$message.error("API返回的数据格式有误，数组长度不匹配");
+              return;
+          }
+          this.tableData = roomTypeList.map((type, idx) => ({
+            roomType: roomTypeMap[type] || `未知类型 ${type}`,
             saleCount: saleList[idx] || 0
           })).sort((a, b) => b.saleCount - a.saleCount);
-          
-          this.tableData = tableData;
-        })
-        .catch((err) => {
-          console.error("获取房型销量失败:", err);
-          this.$message.error("获取房型销量数据失败");
-          this.tableData = []; // 清空数据以显示“暂无数据”
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+        } else {
+            this.tableData = [];
+        }
+      }).catch((err) => {
+        console.error("获取房型销量失败:", err);
+        this.$message.error("获取房型销量数据失败");
+        this.tableData = [];
+      }).finally(() => {
+        this.loading = false;
+      });
     },
-    
-    // 销毁并清空图表实例
     clearCharts() {
-        if (this.pieChartInstance) {
-            this.pieChartInstance.dispose();
-            this.pieChartInstance = null;
-        }
-        if (this.roseChartInstance) {
-            this.roseChartInstance.dispose();
-            this.roseChartInstance = null;
-        }
+      if (this.pieChartInstance) {
+        this.pieChartInstance.dispose();
+        this.pieChartInstance = null;
+      }
     },
-
     drawPieChart() {
-      // 确保DOM元素已存在
       if (!this.$refs.pieChart) return;
-      
-      // 初始化图表实例
       if (!this.pieChartInstance) {
         this.pieChartInstance = echarts.init(this.$refs.pieChart);
       }
       
-      const isSingleData = this.validData.length === 1;
       const option = {
         tooltip: {
           trigger: 'item',
           formatter: '{b}: {c} ({d}%)',
           backgroundColor: 'rgba(30, 30, 30, 0.8)',
           borderColor: '#555',
-          textStyle: {
-            color: '#fff'
-          }
+          textStyle: { color: '#fff' }
         },
+        // 【核心修正】将图例移动到下方
         legend: {
-          orient: 'vertical',
-          right: 10,
-          top: 'center',
-          textStyle: {
-            color: '#ffffff'
-          },
-          formatter: (name) => {
-            const item = this.validData.find(d => d.roomType === name);
-            return `${name}: ${item ? item.saleCount : 0}`;
-          }
+          orient: 'horizontal',
+          bottom: 10,
+          textStyle: { color: '#ffffff' },
         },
-        series: [
-          {
-            name: '销量占比',
-            type: 'pie',
-            radius: ['30%', '70%'],
-            center: ['40%', '50%'],
-            avoidLabelOverlap: !isSingleData,
-            itemStyle: {
-              borderRadius: 10,
-              borderColor: 'rgba(40, 43, 51, 0.85)',
-              borderWidth: 2
-            },
+        series: [{
+          name: '销量占比',
+          type: 'pie',
+          // 【核心修正】调整半径和中心点，为底部图例留出空间
+          radius: ['40%', '70%'],
+          center: ['50%', '50%'],
+          avoidLabelOverlap: false,
+          itemStyle: {
+            borderRadius: 10,
+            borderColor: 'rgba(40, 43, 51, 0.85)',
+            borderWidth: 2
+          },
+          label: { show: false, position: 'center' },
+          emphasis: {
             label: {
               show: true,
-              formatter: isSingleData ? '{b}: {c}' : '{b}\n{d}%',
-              color: '#eee',
+              fontSize: '20',
               fontWeight: 'bold',
-              fontSize: 14
-            },
-            labelLine: {
-              show: true,
-              length: 10,
-              length2: 15
-            },
-            emphasis: {
-              scale: true,
-              scaleSize: 10,
-              label: {
-                show: true,
-                fontSize: 16,
-                fontWeight: 'bold'
-              }
-            },
-            data: this.validData.map((item, idx) => ({
-              value: item.saleCount,
-              name: item.roomType,
-              itemStyle: {
-                color: this.colors[idx % this.colors.length]
-              }
-            }))
-          }
-        ]
+              color: '#fff'
+            }
+          },
+          labelLine: { show: false },
+          data: this.validData.map((item, idx) => ({
+            value: item.saleCount,
+            name: item.roomType,
+            itemStyle: { color: this.colors[idx % this.colors.length] }
+          }))
+        }]
       };
       
       this.pieChartInstance.setOption(option, true);
     },
-
-    drawRoseChart() {
-      // 确保DOM元素已存在
-      if (!this.$refs.roseChart) return;
-      
-      // 初始化图表实例
-      if (!this.roseChartInstance) {
-        this.roseChartInstance = echarts.init(this.$refs.roseChart);
-      }
-      
-      const option = {
-        tooltip: {
-          trigger: 'item',
-          formatter: '{b}: {c} ({d}%)',
-          backgroundColor: 'rgba(30, 30, 30, 0.8)',
-          borderColor: '#555',
-          textStyle: {
-            color: '#fff'
-          }
-        },
-        series: [
-          {
-            name: '销量',
-            type: 'pie',
-            radius: ['15%', '95%'],
-            center: ['50%', '50%'],
-            roseType: 'radius',
-            itemStyle: {
-              borderRadius: 8
-            },
-            label: {
-              show: true,
-              position: 'inside',
-              formatter: '{c}',
-              color: '#fff',
-              fontWeight: 'bold',
-              fontSize: 14
-            },
-            labelLine: {
-              length: 10,
-              length2: 0,
-              smooth: true
-            },
-            animationType: 'scale',
-            animationEasing: 'elasticOut',
-            animationDelay: (idx) => Math.random() * 200,
-            data: this.validData.map((item, idx) => ({
-              value: item.saleCount,
-              name: item.roomType,
-              itemStyle: {
-                color: this.colors[idx % this.colors.length],
-                shadowBlur: 10,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
-              }
-            }))
-          }
-        ]
-      };
-      
-      this.roseChartInstance.setOption(option, true);
-    },
-
     resizeCharts() {
-      if (this.pieChartInstance) {
-        this.pieChartInstance.resize();
-      }
-      if (this.roseChartInstance) {
-        this.roseChartInstance.resize();
-      }
+      if (this.pieChartInstance) this.pieChartInstance.resize();
     }
   },
   mounted() {
@@ -270,7 +177,6 @@ export default {
 </script>
 
 <style scoped>
-/* 样式保持不变 */
 .rtype-sale-container {
   padding: 24px;
 }
@@ -291,7 +197,7 @@ export default {
   margin-bottom: 10px;
   text-align: center;
 }
-.no-data-pie {
+.no-data-placeholder {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -301,5 +207,64 @@ export default {
   background: rgba(30, 30, 30, 0.2);
   border-radius: 4px;
   font-style: italic;
+}
+.chart-title {
+  font-size: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.rank-badge {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  border-radius: 50%;
+  text-align: center;
+  color: #fff;
+  font-weight: bold;
+  background-color: #606266;
+}
+.rank-1 {
+  background: linear-gradient(135deg, #fceabb, #f8b500);
+  color: #8c5307;
+  box-shadow: 0 0 5px #f8b500;
+}
+.rank-2 {
+  background: linear-gradient(135deg, #e6e9f0, #eef1f5);
+  color: #6c7a89;
+  box-shadow: 0 0 5px #e6e9f0;
+}
+.rank-3 {
+  background: linear-gradient(135deg, #f0c7a1, #d6893e);
+  color: #6d3f11;
+  box-shadow: 0 0 5px #d6893e;
+}
+.transparent-card >>> .el-table,
+.transparent-card >>> .el-table__expanded-cell {
+  background-color: transparent;
+}
+.transparent-card >>> .el-table th,
+.transparent-card >>> .el-table tr {
+  background-color: transparent;
+  color: #eee;
+  /* 【样式修改】增加行高 */
+  height: 50px;
+}
+.transparent-card >>> .el-table td, 
+.transparent-card >>> .el-table th.is-leaf {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+.transparent-card >>> .el-table th {
+  color: #fff;
+}
+.transparent-card >>> .el-table::before {
+  height: 0px;
+}
+.transparent-card >>> .el-table--enable-row-hover .el-table__body tr:hover > td {
+  background-color: rgba(255, 255, 255, 0.05) !important;
 }
 </style>

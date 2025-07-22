@@ -1,6 +1,6 @@
 <template>
     <div class="login-container">
-         <!-- 左上角logo -->
+        <!-- 左上角logo -->
         <img src="@/assets/logo.png" alt="logo" class="login-logo" />
         <div class="login-box-wrapper">
             <el-card class="box-card">
@@ -132,7 +132,6 @@ export default {
         this.$refs.password.focus();
       });
     },
-    // 【最终版】handleLogin 方法
     handleLogin() {
       this.loading = true;
       this.req({
@@ -143,13 +142,16 @@ export default {
           password: this.loginForm.password,
         },
       }).then(data => {
-        // 拦截器已确保请求成功，data 就是后端返回的 data 对象
+        // 【核心修正】在这里添加存储 id 的逻辑
+        // 假设登录成功后，返回的 data 对象中包含 id 字段
+        if (data && data.id) {
+          localStorage.setItem("id", data.id);
+        }
         localStorage.setItem("hasLogin", "true");
-        localStorage.setItem("token", data.token); // 直接从 data 中获取 token
-        localStorage.setItem("userInfo", JSON.stringify(data)); // 保存用户信息
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userInfo", JSON.stringify(data));
         this.$router.push({ path: this.redirect || "/home" });
       }).catch(() => {
-        // 拦截器已弹出错误消息，这里只需要处理 UI 状态
         this.loading = false;
       });
     },
