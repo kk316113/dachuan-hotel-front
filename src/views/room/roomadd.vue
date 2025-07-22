@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-row>
       <el-col :span="16" :offset="4">
-        <div class="content-card">
+        <div class="content-card" v-loading="loading">
           <div class="card-header">
             <span>输入新房间信息</span>
           </div>
@@ -64,7 +64,7 @@
       </el-col>
     </el-row>
 
-    <el-dialog title="操作成功" :visible.sync="dialogVisible" width="30%" center>
+    <el-dialog title="操作成功" :visible.sync="dialogVisible" width="30%" center :append-to-body="true">
       <span>新房间信息添加成功！</span>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
@@ -107,10 +107,23 @@ export default {
             data: this.addForm
           }).then(() => {
               this.$message.success('添加成功！');
-              this.dialogVisible = true;
               this.resetForm();
           }).catch((err) => {
-            console.error("添加房间请求失败:", err);
+            // 【核心修正】在这里手动解析 500 错误中的具体信息
+            let errorMsg = '操作失败，请重试'; // 默认错误消息
+            
+            // 检查 err.response.data.msg 是否存在
+            if (err.response && err.response.data && err.response.data.msg) {
+              // 如果后端在500错误中返回了包含 msg 的 JSON，就使用它
+              errorMsg = err.response.data.msg;
+            } else if (err.message) {
+              // 否则，使用拦截器或axios生成的通用错误信息
+              errorMsg = err.message;
+            }
+            
+            this.$message.error(errorMsg);
+            console.error("添加房间请求失败:", err.response || err);
+            
           }).finally(() => {
             this.loading = false;
           });

@@ -1,6 +1,6 @@
 <template>
     <div class="login-container">
-         <!-- 左上角logo -->
+        <!-- 左上角logo -->
         <img src="@/assets/logo.png" alt="logo" class="login-logo" />
         <div class="login-box-wrapper">
             <el-card class="box-card">
@@ -142,6 +142,11 @@ export default {
           password: this.loginForm.password,
         },
       }).then(data => {
+        // 【核心修正】在这里添加存储 id 的逻辑
+        // 假设登录成功后，返回的 data 对象中包含 id 字段
+        if (data && data.id) {
+          localStorage.setItem("id", data.id);
+        }
         localStorage.setItem("hasLogin", "true");
         localStorage.setItem("token", data.token);
         localStorage.setItem("userInfo", JSON.stringify(data));

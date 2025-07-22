@@ -5,8 +5,15 @@
         <el-table-column prop="id" label="订单ID" align="center" width="80"></el-table-column>
         <el-table-column prop="userId" label="用户ID" align="center" width="80"></el-table-column>
         <el-table-column prop="roomId" label="房间ID" align="center" width="80"></el-table-column>
-        <el-table-column prop="createTime" label="下单时间" align="center" width="180"></el-table-column>
-        <el-table-column prop="inTime" label="预定入住时间" align="center" width="180"></el-table-column>
+        
+        <!-- 【核心修正】使用格式化函数来显示时间 -->
+        <el-table-column label="下单时间" align="center" width="180">
+            <template slot-scope="{row}">{{ formatDateTime(row.createTime) }}</template>
+        </el-table-column>
+        <el-table-column label="预定入住时间" align="center" width="180">
+            <template slot-scope="{row}">{{ formatDateTime(row.inTime) }}</template>
+        </el-table-column>
+
         <el-table-column prop="realPrice" label="总价" align="center">
             <template slot-scope="{row}">¥{{ row.realPrice }}</template>
         </el-table-column>
@@ -37,15 +44,27 @@ export default {
       this.req({
         url: "/orders/complete", // 遵循 API 文档
         method: "get",
-      }).then((res) => {
-        // 因为拦截器已处理，res 在这里就是最终的数据数组
-        this.tableData = res;
-        this.loading = false;
+      }).then((data) => {
+        // 因为拦截器已处理，data 在这里就是最终的数据数组
+        this.tableData = data || [];
       }).catch(err => {
-        this.loading = false;
         console.error("获取已处理订单失败:", err);
+      }).finally(() => {
+        this.loading = false;
       });
     },
+
+    // 【新增】格式化时间戳的辅助函数
+    formatDateTime(timestamp) {
+      if (!timestamp) return 'N/A';
+      const date = new Date(timestamp);
+      return date.toLocaleString('zh-CN', { 
+        year: 'numeric', month: '2-digit', day: '2-digit', 
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        hour12: false 
+      }).replace(/\//g, '-');
+    },
+
     // 辅助方法，用于在表格中显示状态文字
     getFlagText(flag) {
         switch (flag) {
@@ -75,4 +94,5 @@ export default {
 .user-table {
   margin: 2rem;
 }
+
 </style>
