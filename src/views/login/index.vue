@@ -132,7 +132,6 @@ export default {
         this.$refs.password.focus();
       });
     },
-    // 【最终版】handleLogin 方法
     handleLogin() {
       this.loading = true;
       this.req({
@@ -143,13 +142,11 @@ export default {
           password: this.loginForm.password,
         },
       }).then(data => {
-        // 拦截器已确保请求成功，data 就是后端返回的 data 对象
         localStorage.setItem("hasLogin", "true");
-        localStorage.setItem("token", data.token); // 直接从 data 中获取 token
-        localStorage.setItem("userInfo", JSON.stringify(data)); // 保存用户信息
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userInfo", JSON.stringify(data));
         this.$router.push({ path: this.redirect || "/home" });
       }).catch(() => {
-        // 拦截器已弹出错误消息，这里只需要处理 UI 状态
         this.loading = false;
       });
     },
