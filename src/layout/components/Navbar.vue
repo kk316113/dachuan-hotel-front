@@ -5,7 +5,6 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <!-- 【核心修正】将 el.avatar 修改为 el-avatar -->
           <el-avatar shape="square" :size="35" :src="admin.image" style="vertical-align: middle; margin-right: 5px;"></el-avatar>
           <span class="el-dropdown-link">
             欢迎您, {{ admin.name }}<i class="el-icon-arrow-down el-icon--right"></i>
@@ -74,32 +73,29 @@ export default {
     },
     
     // 获取管理员信息的方法
-    async getAdminInfo() {
+    getAdminInfo() {
       const adminId = localStorage.getItem('id');
       if (!adminId) {
-        // 如果本地没有ID，则抛出错误
-        throw new Error("在 localStorage 中未找到 'id'");
+        console.warn("在 localStorage 中未找到 'id'，无法获取管理员信息");
+        return; // 如果没有ID，则不发送请求
       }
       this.admin.id = adminId;
 
-      // 使用 try...catch 包装异步请求
-      try {
-        const data = await this.req({
-          url: '/admins',
-          method: 'get',
-          params: { id: this.admin.id }
-        });
+      this.req({
+        url: '/admins',
+        method: 'get',
+        params: { id: this.admin.id }
+      }).then(data => {
         if (data) {
           this.admin.name = data.adminName || '管理员';
           if (data.image) {
             this.admin.image = data.image;
           }
         }
-      } catch (err) {
+      }).catch(err => {
         console.error("Navbar: GET /admins 请求失败:", err);
-        // 将错误继续向上抛出，让调用者知道请求失败了
-        throw err;
-      }
+        // 页面加载时的查询失败可以不打扰用户，只在控制台报错
+      });
     },
 
     logout() {
@@ -113,20 +109,17 @@ export default {
         }).catch(() => {});
     },
 
-    // 【核心修正】打开修改头像弹窗时，先获取信息
-    async openAvatarDialog() {
-      try {
-        // 等待获取信息成功
-        await this.getAdminInfo();
-        
-        // 成功后，准备并打开弹窗
-        this.newAvatarFile = null;
-        this.newAvatarUrl = '';
-        this.avatarDialogVisible = true;
-      } catch (err) {
-        // 如果 getAdminInfo 失败 (例如没有ID或网络错误)，在这里捕获并提示用户
-        this.$message.error("获取管理员信息失败，请重新登录后再试。");
+    // 【核心修正】打开修改头像弹窗时，不再查询信息
+    openAvatarDialog() {
+      // 检查ID是否存在，如果页面加载时获取失败，在这里给用户一个提示
+      if (!this.admin.id) {
+        this.$message.error("无法获取管理员ID，请刷新页面或重新登录后再试。");
+        return;
       }
+      // 准备并打开弹窗
+      this.newAvatarFile = null;
+      this.newAvatarUrl = '';
+      this.avatarDialogVisible = true;
     },
 
     handleAvatarChange(file) {
@@ -144,9 +137,8 @@ export default {
         this.$message.warning("请先选择一张图片");
         return;
       }
-      // 此时 this.admin.id 已经是最新获取的
       if (!this.admin.id) {
-        this.$message.error("无法获取管理员ID，请重新登录后再试！");
+        this.$message.error("无法获取管理员ID，请刷新页面或重新登录后再试！");
         return;
       }
       this.uploading = true;
@@ -170,7 +162,8 @@ export default {
     }
   },
   created() {
-    // 【核心修正】组件创建时不再自动请求管理员信息
+    // 【核心修正】组件创建时，自动请求管理员信息
+    this.getAdminInfo();
   }
 };
 </script>

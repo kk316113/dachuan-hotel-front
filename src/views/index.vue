@@ -61,7 +61,7 @@ export default {
       // 快捷操作按钮 (path需要与您的路由配置匹配)
       quickActions: [
         { title: '查询用户', icon: 'el-icon-user-solid', path: '/user/query-user' },
-        { title: '添加房间', icon: 'el-icon-circle-plus', path: '/room/add-room' }, // 路径修正
+        { title: '添加房间', icon: 'el-icon-circle-plus', path: '/room/add-room' },
         { title: '查询房间', icon: 'el-icon-search', path: '/room/room-search' },
         { title: '月度报表', icon: 'el-icon-s-data', path: '/report/report-list' },
         { title: '房型销量', icon: 'el-icon-pie-chart', path: '/report/rtype-sale' }
@@ -83,17 +83,22 @@ export default {
     async getDashboardStats() {
       this.loadingStats = true;
       try {
-        // 使用 Promise.all 并发请求，提高加载速度
-        const [pendingOrdersData, monthlyIncomeData] = await Promise.all([
+        // 使用 Promise.all 并发请求所有四个API，提高加载速度
+        const [
+          checkinsData, 
+          roomsData, 
+          pendingOrdersData, 
+          monthlyIncomeData
+        ] = await Promise.all([
+          this.req({ url: '/dashboard/checkins/today', method: 'get' }),
+          this.req({ url: '/dashboard/rooms/available', method: 'get' }),
           this.req({ url: '/orders/pending/count', method: 'get' }),
           this.req({ url: '/report/income/currentMonth', method: 'get' })
         ]);
 
-        // 暂无API的数据，暂时使用模拟数据
-        const checkInsToday = 25; // TODO: 未来可以替换为真实的API调用
-        const availableRooms = 102; // TODO: 未来可以替换为真实的API调用
-
         // 从API响应中提取真实数据
+        const checkInsToday = checkinsData ? checkinsData.todayCheckins : 0;
+        const availableRooms = roomsData ? roomsData.availableRooms : 0;
         const pendingOrders = pendingOrdersData ? pendingOrdersData.pendingCount : 0;
         const monthlyIncome = monthlyIncomeData ? monthlyIncomeData.totalIncome : 0;
 
