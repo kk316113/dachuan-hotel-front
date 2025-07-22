@@ -22,16 +22,22 @@
         </div>
       </el-col>
     </el-row>
+
+    <!-- 快捷操作入口 -->
     <el-row :gutter="20">
       <el-col :span="24">
         <div class="actions-card">
-           <div class="card-header">快捷操作</div>
-           <div class="actions-grid">
-            <div class="action-item" v-for="action in quickActions" :key="action.title" @click="handleActionClick(action.path)">
-              <i :class="action.icon"></i>
-              <span>{{ action.title }}</span>
+           <div class="card-header">
+             <span>快捷操作</span>
+           </div>
+           <div class="card-body">
+             <div class="actions-grid">
+              <div class="action-item" v-for="action in quickActions" :key="action.title" @click="handleActionClick(action.path)">
+                <i :class="action.icon"></i>
+                <span>{{ action.title }}</span>
+              </div>
             </div>
-          </div>
+           </div>
         </div>
       </el-col>
     </el-row>
@@ -52,9 +58,10 @@ export default {
         { title: '待处理订单', value: '-', icon: 'el-icon-s-order', color: '#E6A23C' },
         { title: '本月总收入 (元)', value: '-', icon: 'el-icon-money', color: '#F56C6C' }
       ],
+      // 快捷操作按钮 (path需要与您的路由配置匹配)
       quickActions: [
         { title: '查询用户', icon: 'el-icon-user-solid', path: '/user/query-user' },
-        { title: '添加房间', icon: 'el-icon-circle-plus', path: '/room/room-add' },
+        { title: '添加房间', icon: 'el-icon-circle-plus', path: '/room/add-room' }, // 路径修正
         { title: '查询房间', icon: 'el-icon-search', path: '/room/room-search' },
         { title: '月度报表', icon: 'el-icon-s-data', path: '/report/report-list' },
         { title: '房型销量', icon: 'el-icon-pie-chart', path: '/report/rtype-sale' }
@@ -71,30 +78,39 @@ export default {
       else if (hour < 18) this.welcomeMessage = "下午好！";
       else this.welcomeMessage = "晚上好！";
     },
-    getDashboardStats() {
+    
+    // 【核心修正】获取仪表盘统计数据
+    async getDashboardStats() {
       this.loadingStats = true;
-      // 这里模拟一个API请求，您可以替换为您真实的 this.req 调用
-      new Promise(resolve => {
-        setTimeout(() => {
-          resolve({
-            checkInsToday: 25,
-            availableRooms: 102,
-            pendingOrders: 8,
-            monthlyIncome: 128500
-          });
-        }, 1000); // 模拟1秒延迟
-      }).then(data => {
+      try {
+        // 使用 Promise.all 并发请求，提高加载速度
+        const [pendingOrdersData, monthlyIncomeData] = await Promise.all([
+          this.req({ url: '/orders/pending/count', method: 'get' }),
+          this.req({ url: '/report/income/currentMonth', method: 'get' })
+        ]);
+
+        // 暂无API的数据，暂时使用模拟数据
+        const checkInsToday = 25; // TODO: 未来可以替换为真实的API调用
+        const availableRooms = 102; // TODO: 未来可以替换为真实的API调用
+
+        // 从API响应中提取真实数据
+        const pendingOrders = pendingOrdersData ? pendingOrdersData.pendingCount : 0;
+        const monthlyIncome = monthlyIncomeData ? monthlyIncomeData.totalIncome : 0;
+
+        // 更新卡片数据
         this.statsCards = [
-          { title: '今日入住', value: data.checkInsToday, icon: 'el-icon-s-home', color: '#409EFF' },
-          { title: '空闲房间', value: data.availableRooms, icon: 'el-icon-house', color: '#67C23A' },
-          { title: '待处理订单', value: data.pendingOrders, icon: 'el-icon-s-order', color: '#E6A23C' },
-          { title: '本月总收入 (元)', value: data.monthlyIncome.toLocaleString(), icon: 'el-icon-money', color: '#F56C6C' }
+          { title: '今日入住', value: checkInsToday, icon: 'el-icon-s-home', color: '#409EFF' },
+          { title: '空闲房间', value: availableRooms, icon: 'el-icon-house', color: '#67C23A' },
+          { title: '待处理订单', value: pendingOrders, icon: 'el-icon-s-order', color: '#E6A23C' },
+          { title: '本月总收入 (元)', value: monthlyIncome.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), icon: 'el-icon-money', color: '#F56C6C' }
         ];
+
+      } catch (err) {
+        // 您的 request.js 拦截器会自动弹出错误提示
+        console.error("获取主页数据失败:", err);
+      } finally {
         this.loadingStats = false;
-      }).catch(() => {
-        this.loadingStats = false;
-        this.$message.error("获取主页数据失败");
-      });
+      }
     },
 
     // 处理快捷操作点击事件
@@ -116,7 +132,6 @@ export default {
 <style scoped>
 .dashboard-container {
   padding: 24px;
-  /* background: linear-gradient(135deg, #2c3e50, #34495e); */
   min-height: calc(100vh - 50px);
 }
 
@@ -181,21 +196,24 @@ export default {
   font-weight: bold;
 }
 
-.actions-card, .card-header {
+.actions-card {
   background-color: rgba(40, 43, 51, 0.85);
   backdrop-filter: blur(5px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   color: #fff;
-  padding: 20px;
+  overflow: hidden; /* 确保子元素的边框不会溢出 */
 }
 
-.card-header {
+.actions-card .card-header {
+  padding: 18px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   font-size: 18px;
   font-weight: bold;
-  padding-bottom: 20px;
-  margin-bottom: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.actions-card .card-body {
+  padding: 20px;
 }
 
 .actions-grid {
