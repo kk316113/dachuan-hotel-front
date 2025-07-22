@@ -25,7 +25,7 @@ import zhLocale from 'element-ui/lib/locale/lang/zh-CN';
 zhLocale.el.pagination = {
   goto: '跳至',
   pagesize: '条/页',
-  total: `共计 {total} 条`,
+  total: "",
   pageClassifier: '页',
 };
 Vue.use(ElementUI, {
