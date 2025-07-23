@@ -135,9 +135,9 @@ export default {
         },
         yAxis: {
           type: 'value',
-          max: 1000,
+          max: 3000,
           min: 0,
-          interval: 100,
+          interval: 300,
           axisLabel: {
             formatter: '{value} 元'
           },
