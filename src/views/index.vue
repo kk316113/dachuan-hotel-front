@@ -61,7 +61,7 @@ export default {
       // 快捷操作按钮 (path需要与您的路由配置匹配)
       quickActions: [
         { title: '查询用户', icon: 'el-icon-user-solid', path: '/user/query-user' },
-        { title: '添加房间', icon: 'el-icon-circle-plus', path: '/room/add-room' },
+        { title: '添加房间', icon: 'el-icon-circle-plus', path: '/room/room-add' },
         { title: '查询房间', icon: 'el-icon-search', path: '/room/room-search' },
         { title: '月度报表', icon: 'el-icon-s-data', path: '/report/report-list' },
         { title: '房型销量', icon: 'el-icon-pie-chart', path: '/report/rtype-sale' }
